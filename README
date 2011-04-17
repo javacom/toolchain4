@@ -5,11 +5,11 @@
 sudo apt-get update
 sudo apt-get install bison flex build-essential wget patch
 sudo apt-get install git autoconf gawk libssl-dev uuid-dev
-sudo apt-get clang
+sudo apt-get install clang
 
 3.  Create /toolchain4
 
-4.  Rut iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
+4.  Put iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
 
 5.  Run
     cd /toolchain4
