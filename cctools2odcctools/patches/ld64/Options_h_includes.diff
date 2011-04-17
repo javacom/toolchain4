@@ -1,0 +1,12 @@
+--- src/Options.h.orig	2009-06-11 20:14:41.000000000 -0500
++++ src/Options.h	2009-06-11 20:15:01.000000000 -0500
+@@ -28,6 +28,9 @@
+ 
+ #include <stdint.h>
+ #include <mach/machine.h>
++#include <stdlib.h>
++#include <limits.h>
++#include <string.h>
+ 
+ #include <vector>
+ #include <ext/hash_set>

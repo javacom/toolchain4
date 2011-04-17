@@ -1,0 +1,80 @@
+builddir = @builddir@
+top_builddir = @top_builddir@
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+bindir		= @bindir@
+
+VPATH = @srcdir@
+
+CC              = @CC@
+CFLAGS          = @CFLAGS@
+WARNINGS	= @WARNINGS@
+MDYNAMICNOPIC   = @MDYNAMICNOPIC@
+CPPFLAGS        = @CPPFLAGS@
+DEFS            = @DEFS@ @ENDIAN_FLAG@
+LDFLAGS         = @LDFLAGS@
+OBJC		= @OBJC@
+HAVE_PRIVEXT    = @HAVE_PRIVEXT@
+HAVE_FOREIGN_HEADERS    = @HAVE_FOREIGN_HEADERS@
+
+ifeq ($(HAVE_PRIVEXT),NO)
+INCPRIVEXT      = -include $(top_srcdir)/include/extern.h
+endif
+
+ifeq ($(HAVE_FOREIGN_HEADERS),YES)
+FORHDRS         = -I$(top_srcdir)/include/foreign
+endif
+
+INSTALL		= @INSTALL@
+INSTALL_PROGRAM	= @INSTALL_PROGRAM@
+transform       = @program_transform_name@
+
+MYINCLUDES      = -I$(builddir) -I$(srcdir) -I$(top_builddir)/include \
+			-I$(top_srcdir)/include $(INCPRIVEXT) $(FORHDRS)
+MYWARNINGS      = 
+MYDEFS          =
+MYLDFLAGS	= -L$(top_builddir)/libstuff
+MYLIBS		=
+
+MYCOMPILEFLAGS	= $(WARNINGS) $(MYWARNINGS) $(DEFS) $(MYDEFS) \
+	$(CPPFLAGS) $(MYINCLUDES) $(CFLAGS) $(MDYNAMICNOPIC) 
+
+MYLINKFLAGS	= $(LDFLAGS) $(MYLDFLAGS) $(MYLIBS)
+
+CFILES = main.c ofile_print.c m68k_disasm.c i860_disasm.c \
+         m88k_disasm.c i386_disasm.c ppc_disasm.c hppa_disasm.c \
+         sparc_disasm.c arm_disasm.c
+
+ifneq ($(OBJC),)
+OBJCFILES = print_objc.c print_objc2_32bit.c print_objc2_64bit.c
+OBJCOBJS = $(OBJCFILES:.c=.o) 
+endif
+OBJS = $(CFILES:.c=.o) 
+
+.PHONY: default clean distclean install
+
+default: otool
+
+$(OBJS): %.o: %.c
+	$(CC) $(MYCOMPILEFLAGS) -c -o $@ $<
+
+$(OBJCOBJS): %.o: %.c
+	$(CC) $(OBJC) $(MYCOMPILEFLAGS) -c -o $@ $<
+
+otool: $(OBJS) $(OBJCOBJS) ofile.o
+	$(CC) -o $@ $^ $(MYLINKFLAGS) -lstuff
+
+
+ofile.o: $(top_srcdir)/libstuff/ofile.c
+	$(CC) -DOTOOL $(MYCOMPILEFLAGS) -c -o $@ $<
+
+install: otool
+	mkdir -p $(DESTDIR)/$(bindir)
+	$(INSTALL_PROGRAM) otool \
+		$(DESTDIR)/$(bindir)/`echo otool | sed '$(transform)'`
+clean:
+	rm -r -f *.o
+	rm -f otool

@@ -1,0 +1,13 @@
+--- src/ld.cpp.orig	2009-06-11 20:00:40.000000000 -0500
++++ src/ld.cpp	2009-06-11 20:01:04.000000000 -0500
+@@ -47,8 +47,9 @@
+ #include <ext/hash_map>
+ #include <dlfcn.h>
+ #include <AvailabilityMacros.h>
++#include <signal.h>
+ 
+-#include "configure.h"
++#include "config.h"
+ #include "Options.h"
+ 
+ #include "ObjectFile.h"

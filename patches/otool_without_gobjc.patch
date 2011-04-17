@@ -1,0 +1,115 @@
+diff -Nur otool.orig/main.c otool/main.c
+--- otool.orig/main.c	2009-09-14 11:04:06.667363200 +0800
++++ otool/main.c	2009-09-14 00:43:01.332443200 +0800
+@@ -1159,14 +1159,19 @@
+ 		S_ATTR_SOME_INSTRUCTIONS){
+ 	    if(strcmp(segname, SEG_OBJC) == 0 &&
+ 	       strcmp(sectname, "__protocol") == 0 && vflag == TRUE){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		print_objc_protocol_section(ofile->load_commands, mh_ncmds,
+ 		   mh_sizeofcmds, ofile->object_byte_sex, ofile->object_addr,
+ 		   ofile->object_size, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else if(strcmp(segname, SEG_OBJC) == 0 &&
+ 	            (strcmp(sectname, "__string_object") == 0 ||
+ 	             strcmp(sectname, "__cstring_object") == 0) &&
+ 		    vflag == TRUE){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		if(mh_cputype & CPU_ARCH_ABI64)
+ 		    print_objc_string_object_section_64(sectname,
+ 			ofile->load_commands, mh_ncmds, mh_sizeofcmds,
+@@ -1179,12 +1184,19 @@
+ 			ofile->load_commands, mh_ncmds, mh_sizeofcmds,
+ 			ofile->object_byte_sex, ofile->object_addr,
+ 			ofile->object_size, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else if(strcmp(segname, SEG_OBJC) == 0 &&
+ 	       strcmp(sectname, "__runtime_setup") == 0 && vflag == TRUE){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		print_objc_runtime_setup_section(ofile->load_commands, mh_ncmds,
+ 		   mh_sizeofcmds, ofile->object_byte_sex, ofile->object_addr,
+ 		   ofile->object_size, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else if(get_sect_info(segname, sectname, ofile->load_commands,
+ 		mh_ncmds, mh_sizeofcmds, mh_filetype, ofile->object_byte_sex,
+@@ -1278,6 +1290,7 @@
+ 			     ofile->object_size);
+ 
+ 	if(oflag){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 	    if(mh_cputype & CPU_ARCH_ABI64){
+ 		get_linked_reloc_info(ofile->load_commands, mh_ncmds,
+ 			mh_sizeofcmds, ofile->object_byte_sex,
+@@ -1358,6 +1371,9 @@
+ 				    ofile->object_size, sorted_symbols,
+ 				    nsorted_symbols, vflag);
+ 	    }
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	}
+ 
+ 	if(load_commands != NULL)
+diff -Nur otool.orig/print_objc.c otool/print_objc.c
+--- otool.orig/print_objc.c	2009-09-14 11:04:08.239624000 +0800
++++ otool/print_objc.c	2009-09-14 00:34:35.735430400 +0800
+@@ -27,6 +27,8 @@
+ 
+ #define __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ 1050
+ 
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
++
+ #include "stdio.h"
+ #include "string.h"
+ #include "mach-o/loader.h"
+@@ -2210,3 +2212,5 @@
+ 	}
+ 	return(FALSE);
+ }
++
++#endif
+diff -Nur otool.orig/print_objc2_32bit.c otool/print_objc2_32bit.c
+--- otool.orig/print_objc2_32bit.c	2009-09-14 11:04:08.499998400 +0800
++++ otool/print_objc2_32bit.c	2009-09-14 00:37:41.192104000 +0800
+@@ -2,6 +2,8 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
++
+ #include "stdio.h"
+ #include "stddef.h"
+ #include "string.h"
+@@ -1395,3 +1397,5 @@
+ 	return(guess_symbol(value, info->sorted_symbols, info->nsorted_symbols,
+ 			    info->verbose));
+ }
++
++#endif
+diff -Nur otool.orig/print_objc2_64bit.c otool/print_objc2_64bit.c
+--- otool.orig/print_objc2_64bit.c	2009-09-14 11:04:08.820459200 +0800
++++ otool/print_objc2_64bit.c	2009-09-14 00:39:29.147336000 +0800
+@@ -2,6 +2,8 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
++
+ #include "stdio.h"
+ #include "stddef.h"
+ #include "string.h"
+@@ -1616,3 +1618,5 @@
+ 	return(guess_symbol(value, info->sorted_symbols, info->nsorted_symbols,
+ 			    info->verbose));
+ }
++
++#endif

@@ -1,0 +1,10 @@
+--- messages.c.orig	2009-09-21 22:03:08.000000000 -0500
++++ messages.c	2009-09-21 22:05:21.000000000 -0500
+@@ -26,7 +26,6 @@
+ #if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
+ #include <servers/netname.h>
+ #else
+-#include <servers/bootstrap.h>
+ #endif
+ #include "as.h"
+ #include "input-scrub.h"

@@ -1,0 +1,46 @@
+--- ./read.c.orig	2011-01-21 12:06:59.000000000 +0100
++++ ./read.c	2011-01-21 12:07:29.000000000 +0100
+@@ -37,6 +37,7 @@
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <inttypes.h>
+ #include "stuff/rnd.h"
+ #include "stuff/arch.h"
+ #include "stuff/best_arch.h"
+@@ -2531,7 +2532,7 @@
+ 
+ 	*p = 0;
+ 	if(strlen(segname) > sizeof(s.segname)){
+-	    as_bad("segment-name: %s too long (maximum %ld characters)",
++	    as_bad("segment-name: %s too long (maximum %" PRIdPTR " characters)",
+ 		    segname, sizeof(s.segname));
+ 	    ignore_rest_of_line();
+ 	    *p = c;
+@@ -2540,7 +2541,7 @@
+ 
+ 	*q = 0;
+ 	if(strlen(sectname) > sizeof(s.sectname)){
+-	    as_bad("section-name: %s too long (maximum %ld characters)",
++	    as_bad("section-name: %s too long (maximum %" PRIdPTR " characters)",
+ 		    sectname, sizeof(s.sectname));
+ 	    ignore_rest_of_line();
+ 	    return;
+@@ -2694,7 +2695,7 @@
+ 
+ 	*p = 0;
+ 	if(strlen(segname) > sizeof(s.segname)){
+-	    as_bad("segment-name: %s too long (maximum %ld characters)",
++	    as_bad("segment-name: %s too long (maximum %" PRIdPTR " characters)",
+ 		    segname, sizeof(s.segname));
+ 	    ignore_rest_of_line();
+ 	    *p = c;
+@@ -2703,7 +2704,7 @@
+ 
+ 	*q = 0;
+ 	if(strlen(sectname) > sizeof(s.sectname)){
+-	    as_bad("section-name: %s too long (maximum %ld characters)",
++	    as_bad("section-name: %s too long (maximum %" PRIdPTR " characters)",
+ 		    sectname, sizeof(s.sectname));
+ 	    ignore_rest_of_line();
+ 	    *p = c;

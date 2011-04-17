@@ -1,0 +1,30 @@
+--- Makefile.in.orig	2011-01-21 10:25:41.000000000 +0100
++++ Makefile.in	2011-01-13 03:28:44.000000000 +0100
+@@ -48,7 +48,7 @@
+ 
+ PROGRAMS = checksyms lipo size strings nm libtool redo_prebinding seg_addr_table \
+ 		seg_hack install_name_tool indr strip nmedit segedit pagestuff \
+-		ranlib
++		ranlib codesign_allocate
+ 
+ CFILES_checksyms	= checksyms.c
+ OBJS_checksyms	= $(CFILES_checksyms:.c=.o)
+@@ -89,6 +89,9 @@
+ CFILES_strip	= strip.c
+ OBJS_strip	= $(CFILES_strip:.c=.o)
+ 
++CFILES_codesign_allocate	= codesign_allocate.c
++OBJS_codesign_allocate	= $(CFILES_codesign_allocate:.c=.o)
++
+ CFILES_nmedit	= strip.c
+ OBJS_nmedit	= nmedit.o
+ 
+@@ -135,6 +138,8 @@
+ 	$(CC) -o $@ $^ $(MYLINKFLAGS)
+ strip: $(OBJS_strip)
+ 	$(CC) -o $@ $^ $(MYLINKFLAGS)
++codesign_allocate: $(OBJS_codesign_allocate)
++	$(CC) -o $@ $^ $(MYLINKFLAGS)
+ nmedit: $(OBJS_nmedit)
+ 	$(CC) -o $@ $^ $(MYLINKFLAGS)
+ segedit: $(OBJS_segedit)

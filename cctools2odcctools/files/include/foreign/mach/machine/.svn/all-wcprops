@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/repository/odcctools/!svn/ver/48/trunk/files/include/foreign/mach/machine
+END
+thread_status.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/repository/odcctools/!svn/ver/48/trunk/files/include/foreign/mach/machine/thread_status.h
+END
+boolean.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/repository/odcctools/!svn/ver/48/trunk/files/include/foreign/mach/machine/boolean.h
+END
+vm_types.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/repository/odcctools/!svn/ver/48/trunk/files/include/foreign/mach/machine/vm_types.h
+END

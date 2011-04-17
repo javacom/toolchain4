@@ -1,0 +1,24 @@
+--- uuid.c.orig	2009-09-21 22:10:40.000000000 -0500
++++ uuid.c	2009-09-21 22:19:17.000000000 -0500
+@@ -26,11 +26,7 @@
+ 
+ #include <stdint.h>
+ #include <string.h>
+-#if !(defined(KLD) && defined(__STATIC__))
+ #include <uuid/uuid.h>
+-#else
+-#include <mach-o/loader.h>
+-#endif /* !(defined(KLD) && defined(__STATIC__)) */
+ 
+ /*
+  * uuid() is called to set the uuid[] bytes for the uuid load command.
+@@ -40,9 +36,5 @@
+ uuid(
+ uint8_t *uuid)
+ {
+-#if defined(KLD) && defined(__STATIC__)
+-    memset(uuid, '\0', sizeof(struct uuid_command));
+-#else 
+     uuid_generate_random((void *)uuid);
+-#endif 
+ }

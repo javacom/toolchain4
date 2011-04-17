@@ -1,0 +1,11 @@
+--- src/Options.cpp.orig	2009-06-11 20:01:53.000000000 -0500
++++ src/Options.cpp	2009-06-11 20:02:24.000000000 -0500
+@@ -30,7 +30,7 @@
+ #include <ctype.h>
+ #include <vector>
+ 
+-#include "configure.h"
++#include "config.h"
+ #include "Options.h"
+ #include "Architectures.hpp"
+ #include "MachOFileAbstraction.hpp"

@@ -1,0 +1,11 @@
+--- ./main.c.orig	2008-03-31 19:16:28.000000000 -0500
++++ ./main.c	2009-06-11 12:30:40.000000000 -0500
+@@ -2656,7 +2656,7 @@
+ 	}
+ }
+ 
+-#ifndef __DYNAMIC__
++#if 0
+ /*
+  * To avoid linking in libm.  These variables are defined as they are used in
+  * pthread_init() to put in place a fast sqrt().

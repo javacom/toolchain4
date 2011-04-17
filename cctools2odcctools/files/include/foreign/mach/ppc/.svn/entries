@@ -1,0 +1,41 @@
+8
+
+dir
+159
+http://svn.macosforge.org/repository/odcctools/trunk/files/include/foreign/mach/ppc
+http://svn.macosforge.org/repository/odcctools
+
+
+
+2005-04-08T00:01:31.000000Z
+79
+ssen
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a073acdd-5acc-438f-8c47-dd119020c213
+
+thread_status.h
+file
+
+
+
+
+2010-12-29T04:49:45.000000Z
+c1cdc3cefcf69fc06d324a0a2d6a8eed
+2005-04-08T00:01:31.000000Z
+79
+ssen
+has-props
+

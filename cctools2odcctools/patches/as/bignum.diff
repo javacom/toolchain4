@@ -1,0 +1,19 @@
+--- ./bignum.h.orig	1993-09-09 14:57:03.000000000 -0500
++++ ./bignum.h	2009-06-11 12:31:04.000000000 -0500
+@@ -29,6 +29,9 @@
+ *									*
+ \***********************************************************************/
+ 
++#ifndef _BIGNUM_H_
++#define _BIGNUM_H_
++
+ #define	LITTLENUM_NUMBER_OF_BITS	(16)
+ #define	LITTLENUM_RADIX			(1 << LITTLENUM_NUMBER_OF_BITS)
+ #define	LITTLENUM_MASK			(0xFFFF)
+@@ -44,3 +47,6 @@
+ /* JF truncated this to get around a problem with GCC */
+ #define	LOG_TO_BASE_2_OF_10	(3.3219280948873623478703194294893901758651)
+ /* WARNING: I haven't checked that the trailing digits are correct! */
++
++#endif // _BIGNUM_H_
++

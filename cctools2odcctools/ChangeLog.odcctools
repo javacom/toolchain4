@@ -1,0 +1,195 @@
+2011-01-21  Denis Froschauer <denis.froschauer@laposte.net>
+	Updated to cctools-782
+	* files/configure.ac, files/libstuff/Makefile.in,
+	extract.sh, patches/as/use_PRI_macros.diff, patches/as/driver.c,
+	patches/include/mach/machine_armv7.diff
+	* cctools-758.tar.gz : Removed
+
+
+2010-04-19  Peter O'Gorman  <peter@pogma.com>
+
+	Updated to cctools-758, modified to hopefully build on x86_64 linux
+	- report from Steven Bosscher. Still a work in progress, haven't
+	checked that it works at all.
+
+	* files/configure.ac, files/as/Makefile.arch.in, extract.sh,
+	patches/ld/uuid-nonsmodule.diff, patches/ar/ar-ranlibpath.diff,
+	patches/as/driver.c, patches/as/messages.diff,
+	patches/misc/redo_prebinding.nogetattrlist.diff,
+	patches/misc/libtool-ldpath.diff,
+	patches/misc/libtool_lipo_transform.diff,
+	patches/misc/libtool-pb.diff, patches/otool/noobjc.diff,
+	patches/libstuff/sys_types.diff: Update
+	* patches/libstuff/cmd_with_prefix.diff,
+	patches/misc/bootstrap_h.diff, patches/ld/ld-nomach.diff,
+	patches/include/mach/machine_armv7.diff, patches/ld64/cstdio.diff,
+	patches/misc/with_prefix.diff, cctools-758.tar.gz : New
+	* cctools-698.1.tar.gz: Removed
+
+			
+2009-07-03  Peter O'Gorman  <peter@pogma.com>
+
+	Enable LTO support. This is pretty awesome, can use clang-cc -triple
+	i386-apple-darwin9.5.0 -emit-llvm-bc on linux, then use our ld64 to
+	create an i386-apple-darwin executable. This is, of course, using a
+	standard install of clang and llvm on linux.
+
+	* files/configure.ac: Check for libLTO.
+	* files/ld64/Makefile.in: Use libLTO.
+	* extract.sh: Add new patch.
+	* patches/ld64/LTOReader-setasmpath.diff: Explicitly tell libLTO the
+	path to as.
+
+2009-07-02  Peter O'Gorman  <peter@pogma.com>
+
+	Um, yeah, so ld64-85.2.2 is older than ld64-85.2.1, so, putting back
+	85.2.1.
+
+	* ld64-85.2.2.tar.gz: remove.
+	* ld64-85.2.1.tar.gz: add.
+	* extract.sh: Change ld64 version. Remove FireOpal dir. 
+
+2009-06-27  Peter O'Gorman  <peter@pogma.com>
+
+	* patches/force_load.diff: Add -force_load flag to ld64.
+	* patches/include/stuff/bytesex-floatstate.diff: Warn less on darwin.
+	* ld64-85.2.2.tar.gz: Update this.
+	* extract.sh: New ld64, chmod the non-writable files.
+
+2009-06-16  Peter O'Gorman  <peter@pogma.com>
+
+	* files/otool/Makefile.in: Fix make warning.
+	* files/misc/Makefile.in, patches/misc/libtool_lipo_transform.diff:
+	Don't use bare 'lipo' to run lipo.
+	* extract.sh: Add new patch.
+
+2009-06-14  Shantonu Sen  <ssen@opendarwin.org>
+
+	* extract.sh: Fix extracting on 10.6
+	* files/configure.ac: Fix ability to specify LDFLAGS/CXXFLAGS
+
+2009-06-14  Peter O'Gorman <peter@pogma.com>
+
+	* Fix typo - s/z86_64/x86_64/. Thanks to Shantonu.
+	* files/configure.ac: Don't define NON_NATIVE, it's unused.
+	* extract.sh: Explicitly list PATCHFILES.
+
+	* Import cctools-698.1 and ld64-85.2.1
+
+2006-09-11  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-622.3 and ld64-59.2
+
+2006-06-03  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-590.42.1 and ld64-47.2
+
+2006-03-15  Shantonu sen  <ssen@opendarwin.org>
+
+	* Import cctools-590.36
+
+2006-02-28  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Have libtool invoke ld64 using the target
+	prefix if needed
+
+2006-02-26  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-590.23.2
+
+2006-02-02  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Fix ld64 build on foreign OSes
+
+2006-01-23  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Fix a problem with ld64 and -L/-F paths
+	with ".." in them.
+
+2005-11-21  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Add ld64-26.0.81 from Xcode 2.2, and
+	have ld(1) invoke it when appropriate
+
+2005-11-20  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-590.18
+
+2005-10-31  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-590.12
+
+2005-06-15  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-590, bring forward patches
+
+2005-06-09  Peter O'Gorman  <pogma@opendarwin.org>
+
+	* files/man/Makefile.in: Set datarootdir too.
+	* patches/ar/ar_S.diff: Add an S option to ar
+	so that we can avoid forking ranlib if doing
+	incremental archive creation.
+	* Makefile: add patch
+
+2005-06-06  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Build and install libmacho.a, headers,
+	and arch(3) man page
+
+2005-03-26  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import cctools-576, bring forward patches
+
+2005-03-06  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Don't let the assembler delete special files
+	like /dev/null
+	* When linking against flat namespace libraries,
+	restore Panther semantics for finding indirect
+	symbols.
+
+2004-11-07  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Add Darwin compatibility headers, and bridge
+	implementations of Mach functions. Currently
+	cross hosted tools build as and otool.
+
+2004-10-14  Shantonu Sen  <ssen@opendarwin.org>
+
+	* Import Apple cctools-528.5
+
+2004-09-05  Shantonu Sen  <ssen@opendarwin.org>
+
+	* files/misc/Makefile.in: Build misc tools
+	* patches/misc/ranlibname.diff: Compile libtool.c
+	as ranlib
+	* patches/misc/libtool-ldpath.diff: Substitute
+	path of ld at build time
+	* patches/ar/ar-ranlibpath.diff: Substitute
+	patch of ranlib at build time
+	
+2004-09-03  Shantonu Sen  <ssen@opendarwin.org>>
+
+	* files/ar/Makefile.in: Get ar building
+	* files/include/Makefile.in: Install headers
+	* files/ld/Makefile: Get ld building
+	* files/otool/Makefile: Get otool building
+	
+2004-09-02  Shantonu Sen  <ssen@opendarwin.org>
+
+	* files/as/Makefile.in: Get assemblers building
+
+2004-08-31  Shantonu Sen  <ssen@opendarwin.org>
+
+	* files/configure.ac: Determine assembler targets and output
+	build directories
+
+2004-08-30  Shantonu Sen  <ssen@opendarwin.org>
+
+	* files/configure.ac: Start work on autoconf script
+
+2004-08-30  Peter O'Gorman  <peter@pogma.com>
+
+	* patches/ld-Bstatic.diff: Add support for -Bstatic/-Bdynamic
+	to Darwin ld(1)/libtool(1).
+

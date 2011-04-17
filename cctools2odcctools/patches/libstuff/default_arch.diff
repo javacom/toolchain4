@@ -1,0 +1,20 @@
+--- get_arch_from_host.c.orig	2006-11-15 07:39:11.000000000 -0800
++++ get_arch_from_host.c	2006-11-15 07:40:27.000000000 -0800
+@@ -28,7 +28,7 @@
+ #include "stuff/openstep_mach.h"
+ #include "stuff/arch.h"
+ #include "stuff/allocate.h"
+-
++#include <config.h>
+ /*
+  * get_arch_from_host() gets the architecture from the host this is running on
+  * and returns zero if the architecture is not known and zero if the
+@@ -62,6 +62,8 @@
+ 	    return(0);
+ 	}
+ 	mach_port_deallocate(mach_task_self(), my_mach_host_self);
++	host_basic_info.cpu_type = EMULATED_HOST_CPU_TYPE;
++	host_basic_info.cpu_subtype = EMULATED_HOST_CPU_SUBTYPE;
+ 
+ 	if(family_arch_flag != NULL){
+ 	    family_arch_flag->cputype = host_basic_info.cpu_type;

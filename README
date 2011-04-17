@@ -1,0 +1,19 @@
+1.  Ubuntu 10.10 iPhone Toolchain 4
+
+2.  Install the following packages
+
+sudo apt-get update
+sudo apt-get install bison flex build-essential wget patch
+sudo apt-get install git autoconf gawk libssl-dev uuid-dev
+sudo apt-get clang
+
+3.  Create /toolchain4
+
+4.  Rut iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
+
+5.  Run
+    cd /toolchain4
+    ./toolchain4 buildsys
+    ./toolchain4 cctools
+    ./toolchain4 llvmgcc
+    ./toolchain4 ldid

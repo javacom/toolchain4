@@ -1,0 +1,97 @@
+--- main.c.orig	2009-09-21 22:28:32.000000000 -0500
++++ main.c	2009-09-21 22:29:57.000000000 -0500
+@@ -44,6 +44,10 @@
+ #include "sparc_disasm.h"
+ #include "arm_disasm.h"
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ /* Name of this program for error messages (argv[0]) */
+ char *progname = NULL;
+ 
+@@ -1141,14 +1145,19 @@
+ 		S_ATTR_SOME_INSTRUCTIONS){
+ 	    if(strcmp(segname, SEG_OBJC) == 0 &&
+ 	       strcmp(sectname, "__protocol") == 0 && vflag == TRUE){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		print_objc_protocol_section(ofile->load_commands, mh_ncmds,
+ 		   mh_sizeofcmds, ofile->object_byte_sex, ofile->object_addr,
+ 		   ofile->object_size, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else if(strcmp(segname, SEG_OBJC) == 0 &&
+ 	            (strcmp(sectname, "__string_object") == 0 ||
+ 	             strcmp(sectname, "__cstring_object") == 0) &&
+ 		    vflag == TRUE){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		if(mh_cputype & CPU_ARCH_ABI64)
+ 		    print_objc_string_object_section_64(sectname,
+ 			ofile->load_commands, mh_ncmds, mh_sizeofcmds,
+@@ -1161,12 +1170,19 @@
+ 			ofile->load_commands, mh_ncmds, mh_sizeofcmds,
+ 			ofile->object_byte_sex, ofile->object_addr,
+ 			ofile->object_size, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else if(strcmp(segname, SEG_OBJC) == 0 &&
+ 	       strcmp(sectname, "__runtime_setup") == 0 && vflag == TRUE){
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		print_objc_runtime_setup_section(ofile->load_commands, mh_ncmds,
+ 		   mh_sizeofcmds, ofile->object_byte_sex, ofile->object_addr,
+ 		   ofile->object_size, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ #ifdef EFI_SUPPORT
+ 	    else if(strcmp(segname, "__RELOC") == 0 &&
+@@ -1298,12 +1314,16 @@
+ 		    swap_relocation_info(loc_relocs, nloc_relocs,
+ 					 get_host_byte_sex());
+ 		}
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		print_objc2_64bit(mh_cputype, ofile->load_commands, mh_ncmds,
+ 			    mh_sizeofcmds, ofile->object_byte_sex,
+ 			    ofile->object_addr, ofile->object_size, symbols64,
+ 			    nsymbols, strings, strings_size, sorted_symbols,
+ 			    nsorted_symbols, ext_relocs, next_relocs,
+ 			    loc_relocs, nloc_relocs, vflag, Vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else if(mh_cputype == CPU_TYPE_ARM){
+ 		get_linked_reloc_info(ofile->load_commands, mh_ncmds,
+@@ -1335,18 +1355,26 @@
+ 		    swap_relocation_info(loc_relocs, nloc_relocs,
+ 					 get_host_byte_sex());
+ 		}
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		print_objc2_32bit(mh_cputype, ofile->load_commands, mh_ncmds,
+ 			    mh_sizeofcmds, ofile->object_byte_sex,
+ 			    ofile->object_addr, ofile->object_size, symbols,
+ 			    nsymbols, strings, strings_size, sorted_symbols,
+ 			    nsorted_symbols, ext_relocs, next_relocs,
+ 			    loc_relocs, nloc_relocs, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	    else{
++#ifdef HAVE_OBJC_OBJC_RUNTIME_H
+ 		 print_objc_segment(ofile->load_commands,mh_ncmds,mh_sizeofcmds,
+ 				    ofile->object_byte_sex, ofile->object_addr,
+ 				    ofile->object_size, sorted_symbols,
+ 				    nsorted_symbols, vflag);
++#else
++		printf("Objective-C not supported\n");
++#endif
+ 	    }
+ 	}
+ 

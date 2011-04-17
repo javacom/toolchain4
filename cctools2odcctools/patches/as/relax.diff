@@ -1,0 +1,16 @@
+--- ./relax.h.orig	2006-04-28 18:51:56.000000000 -0500
++++ ./relax.h	2009-06-11 12:31:03.000000000 -0500
+@@ -1,3 +1,6 @@
++#ifndef _RELAX_H_
++#define _RELAX_H_
++
+ /* The type used for a target address */
+ typedef unsigned long relax_addressT;
+ 
+@@ -42,3 +45,6 @@
+     relax_substateT rlx_more;	  /* Next longer relax-state. */
+ 				  /* 0 means there is no 'next' relax-state. */
+ } relax_typeS;
++
++#endif // _RELAX_H_
++

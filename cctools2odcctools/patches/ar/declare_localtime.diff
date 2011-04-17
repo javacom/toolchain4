@@ -1,0 +1,10 @@
+--- ./contents.c.orig	2009-06-11 12:30:59.000000000 -0500
++++ ./contents.c	2009-06-11 12:31:09.000000000 -0500
+@@ -68,6 +68,7 @@
+ 
+ #include <sys/param.h>
+ #include <sys/stat.h>
++#include <time.h>
+ #include <sys/time.h>
+ 
+ #include <ar.h>

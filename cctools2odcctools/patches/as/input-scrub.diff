@@ -1,0 +1,18 @@
+--- ./input-scrub.c.orig	2006-04-28 18:51:56.000000000 -0500
++++ ./input-scrub.c	2009-06-11 12:30:54.000000000 -0500
+@@ -372,14 +372,7 @@
+   fprintf (stderr,"as:file(%s) %s! ",
+ 	   filename, gripe
+ 	   );
+-  if (errno > sys_nerr)
+-    {
+-      fprintf (stderr, "Unknown error #%d.", errno);
+-    }
+-  else
+-    {
+-      fprintf (stderr, "%s.", sys_errlist [errno]);
+-    }
++      fprintf (stderr, "%s.", strerror(errno));
+   (void)putc('\n', stderr);
+   errno = 0;			/* After reporting, clear it. */
+   if (input_file_is_open())	/* RMS says don't mention line # if not needed. */

@@ -1,0 +1,11 @@
+--- src/FileAbstraction.hpp.orig	2006-06-08 20:55:46.000000000 -0700
++++ src/FileAbstraction.hpp	2006-06-08 20:57:25.000000000 -0700
+@@ -29,7 +29,7 @@
+ #include <string.h>
+ #include <libkern/OSByteOrder.h>
+ 
+-#ifdef __OPTIMIZE__
++#if defined(__OPTIMIZE__) && (__GNUC__ >= 4)
+ #define INLINE	__attribute__((always_inline))
+ #else
+ #define INLINE

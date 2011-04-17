@@ -1,0 +1,149 @@
+# Makefile for iPhone Application for iPhone gcc compiler (SDK Headers)
+
+PROJECTNAME=Essais
+
+#CC=arm-apple-darwin9-gcc
+CC=clang -ccc-host-triple arm-apple-darwin9 -I/usr/toolchain4/toolchain/sys/usr/include/
+
+MINIMUMVERSION:=3.2
+#MINIMUMVERSION:=4.0
+#LD = $(CC)
+LD=arm-apple-darwin9-gcc
+DEBUG=DEBUGOFF
+
+SRCDIR=./Classes
+RESDIR=./Resources
+BUILDDIR=./build/$(MINIMUMVERSION)
+BUNDLE=$(PROJECTNAME).app
+
+#----------------- CFLAGS
+CFLAGS	+= -Wall -std=gnu99
+CFLAGS += -Diphoneos_version_min=$(MINIMUMVERSION)
+ifeq ($(DEBUG),DEBUGOFF)
+CFLAGS += -O0 -g0
+else
+CFLAGS += -g
+endif
+CFLAGS += -Wno-attributes -Wno-trigraphs -Wreturn-type -Wunused-variable
+CFLAGS += -D$(DEBUG)
+
+#----------------- CPPFLAGS
+ifeq ($(DEBUG),DEBUGOFF)
+CPPFLAGS += -g0 -O2
+else
+CPPFLAGS += -g
+endif
+CPPFLAGS += -Diphoneos_version_min=$(MINIMUMVERSION)
+CPPFLAGS += -Wno-attributes -Wno-trigraphs -Wreturn-type -Wunused-variable
+CPPFLAGS += $(addprefix -I,$(SRCDIR))
+CPPFLAGS += -I"$(SDK)/usr/include/c++/4.2.1" 
+CPPFLAGS += -I"$(SDK)/usr/include/c++/4.2.1/armv7-apple-darwin9" 
+CPPFLAGS += -D$(DEBUG)
+
+#----------------- LDFLAGS
+#LDFLAGS	+=	-arch arm -lobjc
+LDFLAGS	+=	-arch arm \
+		-bind_at_load \
+		-framework Foundation \
+		-framework CoreFoundation \
+		-framework UIKit \
+		-framework CoreGraphics \
+		-w
+//LDFLAGS += -framework AVFoundation
+//LDFLAGS += -framework AddressBook
+//LDFLAGS += -framework AddressBookUI
+//LDFLAGS += -framework AudioToolbox
+//LDFLAGS += -framework AudioUnit
+//LDFLAGS += -framework CFNetwork
+//LDFLAGS += -framework CoreAudio
+//LDFLAGS += -framework CoreData
+//LDFLAGS += -framework CoreFoundation 
+//LDFLAGS += -framework GraphicsServices
+//LDFLAGS += -framework CoreLocation
+//LDFLAGS += -framework ExternalAccessory
+//LDFLAGS += -framework GameKit
+//LDFLAGS += -framework IOKit
+//LDFLAGS += -framework MapKit
+//LDFLAGS += -framework MediaPlayer
+//LDFLAGS += -framework MessageUI
+//LDFLAGS += -framework MobileCoreServices
+//LDFLAGS += -framework OpenAL
+//LDFLAGS += -framework OpenGLES
+//LDFLAGS += -framework QuartzCore
+//LDFLAGS += -framework Security
+//LDFLAGS += -framework StoreKit
+//LDFLAGS += -framework System
+//LDFLAGS += -framework SystemConfiguration
+//LDFLAGS += -framework CoreSurface
+//LDFLAGS += -framework GraphicsServices
+//LDFLAGS += -framework Celestial
+//LDFLAGS += -framework WebCore
+//LDFLAGS += -framework WebKit
+//LDFLAGS += -framework SpringBoardUI
+//LDFLAGS += -framework TelephonyUI
+//LDFLAGS += -framework JavaScriptCore
+//LDFLAGS += -framework PhotoLibrary
+
+
+all:	$(PROJECTNAME) bundle
+
+OBJS+=$(patsubst %.m,%.o,$(wildcard $(SRCDIR)/*.m))
+OBJS+=$(patsubst %.c,%.o,$(wildcard $(SRCDIR)/*.c))
+OBJS+=$(patsubst %.mm,%.o,$(wildcard $(SRCDIR)/*.mm))
+OBJS+=$(patsubst %.cpp,%.o,$(wildcard $(SRCDIR)/*.cpp))
+OBJS+=$(patsubst %.m,%.o,$(wildcard ./*.m))
+OBJS+=$(patsubst %.c,%.o,$(wildcard ./*.c))
+PCH=$(wildcard *.pch)
+RESOURCES=$(wildcard $(RESDIR)/*)
+RESOURCES+=$(wildcard ./*.png)
+NIBS=$(patsubst %.xib,%.nib,$(wildcard Xib/*.xib))
+
+
+$(PROJECTNAME): $(OBJS)
+	$(LD) $(LDFLAGS) $(filter %.o,$^) -o $@ 
+	ldid -S $(PROJECTNAME)
+
+bundle: $(PROJECTNAME)
+	@mkdir -p $(BUNDLE)
+	@cp $(PROJECTNAME) $(BUNDLE)
+	@cp $(RESOURCES) $(BUNDLE)
+
+%.o:	%.m %.h $(PCH) $(filter-out $(patsubst %.o,%.h,$(OBJS)), $(wildcard $(SRCDIR)/*.h))
+	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
+
+%.o:	%.m
+	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
+
+%.o:	%.c %.h $(PCH)
+	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
+
+%.o:	%.mm %.h $(PCH) $(filter-out $(patsubst %.o,%.h,$(OBJS)), $(wildcard $(SRCDIR)/*.h))
+	$(CPP) --include $(PCH) -c $(CPPFLAGS) $< -o $@
+
+%.o:	%.cpp %.h $(PCH)
+	$(CPP) --include $(PCH) -c $(CPPFLAGS) $< -o $@
+
+deploy:
+	@ssh root@$(IP) "cd /Applications/$(BUNDLE) && rm -R * || echo 'not found' "
+	@scp -rp $(BUNDLE) root@$(IP):/Applications
+	@ssh root@$(IP) "killall SpringBoard"
+
+deb : $(PROJECTNAME).deb
+
+$(PROJECTNAME).deb : $(PROJECTNAME) bundle
+	mkdir -p DEB/DEBIAN
+	mkdir -p DEB/Applications
+	cp control DEB/DEBIAN
+	cp -r $(BUNDLE) DEB/Applications
+	dpkg-deb -b DEB $(PROJECTNAME).deb
+	(cp $(PROJECTNAME).deb /var/www/html/debs;\
+	cd /var/www/html/debs;\
+	dpkg-scanpackages -m . /dev/null > Packages;\
+	gzip -f Packages )
+
+clean:
+	@rm -f *.o */*.o $(PROJECTNAME)
+	@rm -Rf $(BUNDLE)
+	@rm -Rf DEB
+	@rm $(PROJECTNAME).deb
+

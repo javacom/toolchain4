@@ -1,0 +1,11 @@
+--- ./contents.c.orig	2003-08-12 19:02:29.000000000 -0500
++++ ./contents.c	2009-06-11 12:30:55.000000000 -0500
+@@ -75,7 +75,7 @@
+ #include <fcntl.h>
+ #include <stdio.h>
+ #include <string.h>
+-#include <tzfile.h>
++
+ #include <unistd.h>
+ 
+ #include "archive.h"

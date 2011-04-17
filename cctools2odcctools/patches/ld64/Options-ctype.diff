@@ -1,0 +1,10 @@
+--- ./src/Options.cpp.orig	2006-06-04 09:16:05.000000000 -0700
++++ ./src/Options.cpp	2006-06-04 09:16:09.000000000 -0700
+@@ -27,6 +27,7 @@
+ #include <sys/stat.h>
+ #include <math.h>
+ #include <fcntl.h>
++#include <ctype.h>
+ #include <vector>
+ #include "config.h"
+ 

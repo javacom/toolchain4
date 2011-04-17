@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/repository/odcctools/!svn/ver/68/trunk/files/include/foreign/architecture/i386
+END
+fpu.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/repository/odcctools/!svn/ver/48/trunk/files/include/foreign/architecture/i386/fpu.h
+END
+frame.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/repository/odcctools/!svn/ver/48/trunk/files/include/foreign/architecture/i386/frame.h
+END
+sel.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/repository/odcctools/!svn/ver/68/trunk/files/include/foreign/architecture/i386/sel.h
+END

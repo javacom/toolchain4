@@ -1,0 +1,19 @@
+--- execute.c.orig	2010-04-19 09:51:03.000000000 -0500
++++ execute.c	2010-04-19 09:51:25.000000000 -0500
+@@ -129,6 +129,7 @@
+  * This routine is passed a string to be added to the list of strings for 
+  * command line arguments and is then prefixed with the path of the executable.
+  */
++#if 0
+ __private_extern__
+ void
+ add_execute_list_with_prefix(
+@@ -168,7 +169,7 @@
+ 
+ 	return(makestr(prefix, str, NULL));
+ }
+-
++#endif
+ /*
+  * This routine reset the list of strings of command line arguments so that
+  * an new command line argument list can be built.

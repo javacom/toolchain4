@@ -1,0 +1,14 @@
+--- ld.c.orig	2009-09-21 22:53:53.000000000 -0500
++++ ld.c	2009-09-21 22:54:21.000000000 -0500
+@@ -56,11 +56,6 @@
+ #include "stuff/symbol_list.h"
+ #endif
+ #include <mach/mach_init.h>
+-#if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
+-#include <servers/netname.h>
+-#else
+-#include <servers/bootstrap.h>
+-#endif
+ #else /* defined(KLD) && defined(__STATIC__) */
+ #include <mach/mach.h>
+ #include <mach/kern_return.h>

@@ -1,0 +1,39 @@
+--- ./read.c.orig	2008-03-25 19:37:24.000000000 -0500
++++ ./read.c	2009-06-11 12:30:36.000000000 -0500
+@@ -60,6 +60,10 @@
+ #include "i386.h"
+ #endif
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ /*
+  * Parsing of input is done off of this pointer which points to the next char
+  * of source file to parse.
+--- ./app.c.orig	2007-09-07 19:50:38.000000000 -0500
++++ ./app.c	2009-06-11 12:30:36.000000000 -0500
+@@ -29,6 +29,10 @@
+ #include "app.h"
+ #include "messages.h"
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ FILE *scrub_file = NULL;
+ char *scrub_string = NULL;
+ char *scrub_last_string = NULL;
+--- ./input-file.c.orig	2004-07-29 10:47:06.000000000 -0500
++++ ./input-file.c	2009-06-11 12:30:36.000000000 -0500
+@@ -37,6 +37,10 @@
+ #include "app.h"
+ #include "as.h"
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ /*
+  * This variable is non-zero if the file currently being read should be
+  * preprocessed by app.  It is zero if the file can be read straight in.

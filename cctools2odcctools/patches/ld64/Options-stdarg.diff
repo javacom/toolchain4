@@ -1,0 +1,11 @@
+--- ./src/Options.h.orig	2006-02-01 17:46:31.000000000 -0800
++++ ./src/Options.h	2006-06-04 09:16:01.000000000 -0700
+@@ -31,7 +31,7 @@
+ 
+ #include <vector>
+ #include <ext/hash_set>
+-
++#include <stdarg.h>
+ #include "ObjectFile.h"
+ 
+ void throwf (const char* format, ...) __attribute__ ((noreturn));

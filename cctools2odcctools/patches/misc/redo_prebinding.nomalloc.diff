@@ -1,0 +1,10 @@
+--- ./redo_prebinding.c.orig	2008-02-04 16:30:15.000000000 -0600
++++ ./redo_prebinding.c	2009-06-11 12:31:06.000000000 -0500
+@@ -88,7 +88,6 @@
+ #include <string.h>
+ #include <limits.h>
+ #include <libc.h>
+-#include <malloc/malloc.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <mach-o/stab.h>

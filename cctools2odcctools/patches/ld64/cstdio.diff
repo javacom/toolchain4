@@ -1,0 +1,20 @@
+--- src/ld.cpp.orig	2010-04-19 10:58:59.000000000 -0500
++++ src/ld.cpp	2010-04-19 10:59:29.000000000 -0500
+@@ -36,6 +36,7 @@
+ #include <mach/mach_init.h>
+ #include <mach/mach_host.h>
+ #include <dlfcn.h>
++#include <cstdio>
+ 
+ #include <string>
+ #include <map>
+--- src/Options.cpp.orig	2010-04-19 10:59:12.000000000 -0500
++++ src/Options.cpp	2010-04-19 10:59:42.000000000 -0500
+@@ -29,6 +29,7 @@
+ #include <fcntl.h>
+ #include <ctype.h>
+ #include <vector>
++#include <cstdio>
+ 
+ #include "config.h"
+ #include "Options.h"

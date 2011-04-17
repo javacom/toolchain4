@@ -1,0 +1,540 @@
+--- /usr/include/Security/Authorization.h	2008-02-19 11:34:25.000000000 +0000
++++ /usr/include/Security/Authorization.h	2008-03-24 11:07:40.000000000 +0000
+@@ -30,7 +30,7 @@
+ #ifndef _SECURITY_AUTHORIZATION_H_
+ #define _SECURITY_AUTHORIZATION_H_
+ 
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacTypes.h>
++#include <MacTypes.h>
+ #include <stdio.h>
+ 
+ #if defined(__cplusplus)
+--- /usr/include/Availability.h.orig	2009-08-22 14:42:00.246652205 +0200
++++ /usr/include/Availability.h	2009-09-05 14:13:01.422661070 +0200
+@@ -117,6 +117,8 @@
+ #define __MAC_10_6      1060
+ #define __MAC_NA        9999   /* not available */
+ 
++#define __IPHONE_1_0     10000  
++#define __IPHONE_1_2     10200  
+ #define __IPHONE_2_0     20000  
+ #define __IPHONE_2_1     20100  
+ #define __IPHONE_2_2     20200
+--- /usr/include/AvailabilityInternal.h.orig       2009-09-06 15:54:52.072732297 +0200
++++ /usr/include/AvailabilityInternal.h    2009-09-06 15:54:07.948042542 +0200        
+@@ -52,11 +52,14 @@                                                                        
+         #define __IPHONE_OS_VERSION_MAX_ALLOWED     __IPHONE_3_0                          
+     #endif
+     // make sure a valid min is set
+-    #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_2_0
+-        #undef __IPHONE_OS_VERSION_MIN_REQUIRED
+-        #define __IPHONE_OS_VERSION_MIN_REQUIRED    __IPHONE_2_0
++    #if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_1_2
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_2          __AVAILABILITY_INTERNAL_UNAVAILABLE
++    #elif __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_1_2
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_2          __AVAILABILITY_INTERNAL_WEAK_IMPORT
++    #else
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_2
+     #endif
+-
++
+     // set up internal macros (up to 2.0)
+      #if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_2_0
+         #define __AVAILABILITY_INTERNAL__IPHONE_2_0          __AVAILABILITY_INTERNAL_UNAVAILABLE
+@@ -138,6 +141,19 @@
+     // set up internal macros (n/a)
+     #define __AVAILABILITY_INTERNAL__IPHONE_NA                     __AVAILABILITY_INTERNAL_UNAVAILABLE
+     #define __AVAILABILITY_INTERNAL__IPHONE_NA_DEP__IPHONE_NA      __AVAILABILITY_INTERNAL_UNAVAILABLE
++
++    #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_1_2
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_0_DEP__IPHONE_1_2        __AVAILABILITY_INTERNAL_DEPRECATED
++    #else
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_0_DEP__IPHONE_1_2        __AVAILABILITY_INTERNAL__IPHONE_1_0
++    #endif
++    #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_2_0
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_0_DEP__IPHONE_2_0        __AVAILABILITY_INTERNAL_DEPRECATED
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_2_DEP__IPHONE_2_0        __AVAILABILITY_INTERNAL_DEPRECATED
++    #else
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_0_DEP__IPHONE_2_0        __AVAILABILITY_INTERNAL__IPHONE_1_0
++        #define __AVAILABILITY_INTERNAL__IPHONE_1_2_DEP__IPHONE_2_0        __AVAILABILITY_INTERNAL__IPHONE_1_2
++    #endif
+
+ #elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__)
+     // compiler for Mac OS X sets __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
+--- /usr/include/AvailabilityMacros.h	2008-02-27 06:49:24.000000000 +0000
++++ /usr/include/AvailabilityMacros.h	2008-03-28 14:10:13.000000000 +0000
+@@ -84,7 +84,13 @@
+     #ifdef __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
+         #define MAC_OS_X_VERSION_MIN_REQUIRED __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
+     #else
+-        #if __ppc64__ || __i386__ || __x86_64__
++        #ifdef __ENVIRONMENT_ASPEN_VERSION_MIN_REQUIRED__
++            #if __ENVIRONMENT_ASPEN_VERSION_MIN_REQUIRED__ < 10200
++                #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_4
++            #else
++                #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_5
++            #endif
++        #elif __ppc64__ || __i386__ || __x86_64__
+             #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_4
+ 		#elif __arm__
+ 			#define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_5
+diff --git /usr/include/sys/cdefs.h /usr/include/sys/cdefs.h
+index 64e4e8b..0f43f4c 100644
+--- /usr/include/sys/cdefs.h
++++ /usr/include/sys/cdefs.h
+@@ -253,7 +253,9 @@
+ 
+ /* These settings are particular to each product. */
+ /* Product: iPhone */
++#if __ENVIRONMENT_ASPEN_VERSION_MIN_REQUIRED__-0 >= 20000
+ #define __DARWIN_ONLY_64_BIT_INO_T	1
++#endif
+ #define __DARWIN_ONLY_UNIX_CONFORMANCE	1
+ #define __DARWIN_ONLY_VERS_1050		1
+
+--- /usr/include/CarbonCore/FixMath.h	2008-02-19 12:14:55.000000000 +0000
++++ /usr/include/CarbonCore/FixMath.h	2008-03-27 09:50:49.000000000 +0000
+@@ -90,7 +90,7 @@
+ 
+ #else
+ 
+-    #error "Unknown architecture."
++    //#error "Unknown architecture."
+     // To use unoptimized standard C code, remove above line.
+     #define _IntSaturate(x) ((x) <= -0x1p31f ? (int) -0x80000000 : \
+         0x1p31f <= (x) ? (int) 0x7fffffff : (int) (x))
+--- /usr/include/CarbonCore/fp.h	2008-02-19 12:14:55.000000000 +0000
++++ /usr/include/CarbonCore/fp.h	2008-03-29 18:41:50.000000000 +0000
+@@ -1314,7 +1314,7 @@
+ *   dec2l       Similar to dec2num except a long is returned.                   *
+ *                                                                               *
+ ********************************************************************************/
+-#if TARGET_CPU_PPC || TARGET_CPU_X86 || TARGET_CPU_PPC64 || TARGET_CPU_X86_64
++#if TARGET_CPU_PPC || TARGET_CPU_X86 || TARGET_CPU_PPC64 || TARGET_CPU_X86_64 || TARGET_CPU_ARM
+     #define SIGDIGLEN      36  
+ #endif
+ #define      DECSTROUTLEN   80               /* max length for dec2str output */
+--- /usr/include/machine/locks.h	2008-04-18 07:47:44.000000000 +0000
++++ /usr/include/machine/locks.h	2008-04-18 07:46:43.000000000 +0000
+@@ -27,6 +27,8 @@
+ #include "ppc/locks.h"
+ #elif defined (__i386__)
+ #include "i386/locks.h"
++#elif defined (__arm__)
++#include "arm/locks.h"
+ #else
+ #error architecture not supported
+ #endif
+--- /usr/include/CarbonCore/MachineExceptions.h	2006-09-11 23:05:25.000000000 -0500
++++ /usr/include/CarbonCore/MachineExceptions.h	2007-07-23 18:15:13.000000000 -0500
+@@ -277,6 +277,60 @@
+ typedef struct ExceptionInformation     ExceptionInformation;
+ #endif  /* TARGET_CPU_X86 */
+ 
++#if TARGET_CPU_ARM
++
++struct MachineInformationARM {
++    int unused;
++};
++typedef struct MachineInformationARM MachineInformationARM;
++
++struct RegisterInformationARM {
++    unsigned int R0; 
++    unsigned int R1; 
++    unsigned int R2; 
++    unsigned int R3; 
++    unsigned int R4; 
++    unsigned int R5; 
++    unsigned int R6; 
++    unsigned int R7; 
++    unsigned int R8; 
++    unsigned int R9; 
++    unsigned int R10; 
++    unsigned int R11; 
++    unsigned int R12; 
++    unsigned int R13; 
++    unsigned int R14; 
++    unsigned int R15; 
++    unsigned int R16; 
++    unsigned int R17; 
++};
++typedef struct RegisterInformationARM RegisterInformationARM;
++
++struct FPUInformationARM {
++    unsigned int dunno; /* FIXME */
++};
++typedef struct FPUInformationARM FPUInformationARM;
++
++struct VectorInformationARM {
++    unsigned int dunno[8];
++};
++typedef struct VectorInformationARM VectorInformationARM;
++
++typedef MachineInformationARM         MachineInformation;
++typedef RegisterInformationARM        RegisterInformation;
++typedef FPUInformationARM             FPUInformation;
++typedef VectorInformationARM          VectorInformation;
++struct ExceptionInformation {
++  ExceptionKind       theKind;
++  MachineInformation * machineState;
++  RegisterInformation * registerImage;
++  FPUInformation *    FPUImage;
++  ExceptionInfo       info;
++  VectorInformation * vectorImage;
++};
++typedef struct ExceptionInformation     ExceptionInformation;
++#endif
++
+ /* 
+     Note:   An ExceptionHandler is NOT a UniversalProcPtr, except in Carbon.
+             It must be a PowerPC function pointer with NO routine descriptor, 
+diff -ru /apl/inc/Foundation/NSAffineTransform.h /apl/32/Foundation/NSAffineTransform.h
+--- /apl/inc/Foundation/NSAffineTransform.h	2008-02-19 13:11:39.000000000 +0000
++++ /apl/32/Foundation/NSAffineTransform.h	2008-04-20 02:53:18.000000000 +0000
+@@ -4,7 +4,7 @@
+ 
+ #import <Foundation/NSObject.h>
+ #import <Foundation/NSGeometry.h>
+-#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGAffineTransform.h>
++#import <CoreGraphics/CGAffineTransform.h>
+ 
+ typedef struct {
+     CGFloat m11, m12, m21, m22;
+diff --git /usr/include/Foundation/NSFileManager.h /usr/include/Foundation/NSFileManager.h
+index a394b96..216a43f 100644
+--- /usr/include/Foundation/NSFileManager.h
++++ /usr/include/Foundation/NSFileManager.h
+@@ -97,8 +97,8 @@
+ - (BOOL)linkPath:(NSString *)src toPath:(NSString *)dest handler:(id)handler;
+ - (BOOL)copyPath:(NSString *)src toPath:(NSString *)dest handler:(id)handler;
+ - (BOOL)movePath:(NSString *)src toPath:(NSString *)dest handler:(id)handler;	
+-- (BOOL)removeFileAtPath:(NSString *)path handler:(id)handler;
+ #endif
++- (BOOL)removeFileAtPath:(NSString *)path handler:(id)handler;
+ 
+ /* Process working directory management. Despite the fact that these are instance methods on NSFileManager, these methods report and change (respectively) the working directory for the entire process. Developers are cautioned that doing so is fraught with peril.
+  */
+diff -ru /apl/inc/Foundation/NSGeometry.h /apl/32/Foundation/NSGeometry.h
+--- /apl/inc/Foundation/NSGeometry.h	2008-02-19 13:11:41.000000000 +0000
++++ /apl/32/Foundation/NSGeometry.h	2008-04-20 02:52:14.000000000 +0000
+@@ -6,8 +6,8 @@
+ #import <Foundation/NSValue.h>
+ #import <Foundation/NSCoder.h>
+ 
+-#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGBase.h>
+-#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGGeometry.h>
++#import <CoreGraphics/CGBase.h>
++#import <CoreGraphics/CGGeometry.h>
+ 
+ #if __LP64__ || NS_BUILD_32_LIKE_64
+ 
+diff --git /usr/include/AppKit/NSOpenGL.h /usr/include/AppKit/NSOpenGL.h
+index 5a8eaf4..e3ccb99 100644
+--- /usr/include/AppKit/NSOpenGL.h
++++ /usr/include/AppKit/NSOpenGL.h
+@@ -6,7 +6,12 @@
+ */
+ 
+ #import <Foundation/NSObject.h>
++
++#ifdef __arm__
++#import <OpenGLES/ES1/gl.h>
++#else
+ #import <OpenGL/gl.h>
++#endif
+ 
+ @class NSData, NSView, NSScreen;
+ 
+diff --git /usr/include/CoreVideo/CVDisplayLink.h /usr/include/CoreVideo/CVDisplayLink.h
+index d08c03a..56a8b08 100644
+--- /usr/include/CoreVideo/CVDisplayLink.h
++++ /usr/include/CoreVideo/CVDisplayLink.h
+@@ -24,7 +24,12 @@ typedef struct __CVDisplayLink *CVDisplayLinkRef;
+ #include <ApplicationServices/ApplicationServices.h>
+ #include <CoreVideo/CVReturn.h>
+ #include <CoreVideo/CVBase.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#else
+ #include <OpenGL/OpenGL.h>
++#endif
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+diff --git /usr/include/CoreVideo/CVOpenGLBuffer.h /usr/include/CoreVideo/CVOpenGLBuffer.h
+index d64a896..732637f 100644
+--- /usr/include/CoreVideo/CVOpenGLBuffer.h
++++ /usr/include/CoreVideo/CVOpenGLBuffer.h
+@@ -17,8 +17,14 @@
+ #define __COREVIDEO_CVOPENGLBUFFER_H__ 1
+ 
+ #include <CoreVideo/CVImageBuffer.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#include <OpenGLES/ES1/gl.h>
++#else
+ #include <OpenGL/OpenGL.h>
+ #include <OpenGL/gl.h>
++#endif
+ 
+ 
+ #if defined(__cplusplus)
+diff --git /usr/include/CoreVideo/CVOpenGLTexture.h /usr/include/CoreVideo/CVOpenGLTexture.h
+index 352096e..04d2a62 100644
+--- /usr/include/CoreVideo/CVOpenGLTexture.h
++++ /usr/include/CoreVideo/CVOpenGLTexture.h
+@@ -20,8 +20,15 @@
+ #include <CoreVideo/CVReturn.h>
+ #include <CoreVideo/CVImageBuffer.h>
+ #include <ApplicationServices/ApplicationServices.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#include <OpenGLES/ES1/gl.h>
++#else
+ #include <OpenGL/OpenGL.h>
+ #include <OpenGL/gl.h>
++#endif
++
+ #include <stddef.h>
+ #include <stdint.h>
+ 
+diff --git /usr/include/CoreVideo/CVOpenGLTextureCache.h /usr/include/CoreVideo/CVOpenGLTextureCache.h
+index bb3000e..8b4628b 100644
+--- /usr/include/CoreVideo/CVOpenGLTextureCache.h
++++ /usr/include/CoreVideo/CVOpenGLTextureCache.h
+@@ -13,7 +13,12 @@
+ #include <CoreVideo/CVReturn.h>
+ #include <CoreVideo/CVBuffer.h>
+ #include <CoreVideo/CVOpenGLTexture.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#else
+ #include <OpenGL/OpenGL.h>
++#endif
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+diff --git /usr/include/QuartzCore/CAOpenGLLayer.h /usr/include/QuartzCore/CAOpenGLLayer.h
+index 0991768..fd6543c 100644
+--- /usr/include/QuartzCore/CAOpenGLLayer.h
++++ /usr/include/QuartzCore/CAOpenGLLayer.h
+@@ -5,7 +5,12 @@
+ 
+ #import <QuartzCore/CALayer.h>
+ #import <QuartzCore/CVBase.h>
++
++#ifdef __arm__
++#import <OpenGLES/EAGL.h>
++#else
+ #import <OpenGL/OpenGL.h>
++#endif
+ 
+ @interface CAOpenGLLayer : CALayer
+ {
+diff --git /usr/include/OSServices/OSServices.h /usr/include/OSServices/OSServices.h
+index f14355d..c3295cf 100644
+--- /usr/include/OSServices/OSServices.h
++++ /usr/include/OSServices/OSServices.h
+@@ -53,6 +53,7 @@
+ #include <OSServices/WSTypes.h>
+ #endif
+ 
++#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+ #ifndef __WSMETHODINVOCATION__
+ #include <OSServices/WSMethodInvocation.h>
+ #endif
+@@ -60,6 +61,7 @@
+ #ifndef __WSPROTOCOLHANDLER__
+ #include <OSServices/WSProtocolHandler.h>
+ #endif
++#endif
+ 
+ 
+ #if !__LP64__
+diff --git /usr/include/Security/KCExceptions.h /usr/include/Security/KCExceptions.h
+index 3c62f78..e0abd87 100644
+--- /usr/include/Security/KCExceptions.h
++++ /usr/include/Security/KCExceptions.h
+@@ -28,7 +28,7 @@
+ #ifndef _SECURITY_KCEXCEPTIONS_H_
+ #define _SECURITY_KCEXCEPTIONS_H_
+ 
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacErrors.h>
++#include <CarbonCore/MacErrors.h>
+ #include <security_utilities/errors.h>
+ 
+ #ifdef lock
+diff --git /usr/include/Security/KCUtilities.h /usr/include/Security/KCUtilities.h
+index 7658350..137ac00 100644
+--- /usr/include/Security/KCUtilities.h
++++ /usr/include/Security/KCUtilities.h
+@@ -25,7 +25,7 @@
+ #define _SECURITY_KCUTILITIES_H_
+ 
+ #include <security_utilities/errors.h>
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacErrors.h>
++#include <CarbonCore/MacErrors.h>
+ 
+ namespace Security
+ {
+diff --git /usr/include/Security/Keychains.h /usr/include/Security/Keychains.h
+index 90ef927..f6e8e78 100644
+--- /usr/include/Security/Keychains.h
++++ /usr/include/Security/Keychains.h
+@@ -106,7 +106,7 @@ private:
+ 	typedef KeychainSchemaImpl Impl;
+ };
+ 
+-
++class ItemImpl;
+ class KeychainImpl : public SecCFObject, private CssmClient::Db::DefaultCredentialsMaker
+ {
+     NOCOPY(KeychainImpl)
+diff --git /usr/include/Security/cs.h /usr/include/Security/cs.h
+index d7957fc..87e31ca 100644
+--- /usr/include/Security/cs.h
++++ /usr/include/Security/cs.h
+@@ -31,7 +31,7 @@
+ #include <Security/CodeSigning.h>
+ #include <Security/SecCodeSigner.h>
+ #include <Security/SecBasePriv.h>
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacErrors.h>
++#include <CarbonCore/MacErrors.h>
+ #include <security_utilities/globalizer.h>
+ #include <security_utilities/seccfobject.h>
+ #include <security_utilities/cfclass.h>
+diff --git /usr/include/Security/cspclient.h /usr/include/Security/cspclient.h
+index 8aab4b4..2ffe721 100644
+--- /usr/include/Security/cspclient.h
++++ /usr/include/Security/cspclient.h
+@@ -67,8 +67,8 @@ public:
+ 	Context(const CSP &csp, CSSM_ALGORITHMS alg = CSSM_ALGID_NONE);
+ 	~Context();
+ 
+-	CSP Context::attachment() const { return parent<CSP>(); }
+-	Module Context::module() const { return attachment()->module(); }
++	CSP attachment() const { return parent<CSP>(); }
++	Module module() const { return attachment()->module(); }
+ 	
+ 	CSSM_ALGORITHMS algorithm() const { return mAlgorithm; }
+ 	void algorithm(CSSM_ALGORITHMS alg);
+diff --git /usr/include/Security/mach++.h /usr/include/Security/mach++.h
+index 93cae91..e539b83 100644
+--- /usr/include/Security/mach++.h
++++ /usr/include/Security/mach++.h
+@@ -192,7 +192,7 @@ private:
+ 	mutable char nameBuffer[BOOTSTRAP_MAX_NAME_LEN];
+     
+ protected:
+-	char *Bootstrap::makeName(const char *s) const
++	char *makeName(const char *s) const
+ 	{ return strncpy(nameBuffer, s, BOOTSTRAP_MAX_NAME_LEN); }
+ };
+ 
+diff --git /usr/include/Security/objectacl.h /usr/include/Security/objectacl.h
+index 0be1f62..c9ec079 100644
+--- /usr/include/Security/objectacl.h
++++ /usr/include/Security/objectacl.h
+@@ -125,7 +125,7 @@ public:
+         virtual bool validate(const AclValidationContext &ctx) const = 0;
+ 
+ 		template <class Action>
+-		void ObjectAcl::Entry::exportBlob(Action &pub, Action &priv)
++		void exportBlob(Action &pub, Action &priv)
+ 		{
+ 			Endian<uint32> del = delegate; pub(del);	// 4 bytes delegate flag
+ 			exportSubject(subject, pub, priv);	// subject itself (polymorphic)
+@@ -197,7 +197,7 @@ public:
+ 	// These helpers deal with transferring one subject from/to reader/writer streams.
+ 	// You'd usually only call those from complex subject implementations (e.g. threshold)
+ 	template <class Action>
+-	static void ObjectAcl::exportSubject(AclSubject *subject, Action &pub, Action &priv)
++	static void exportSubject(AclSubject *subject, Action &pub, Action &priv)
+ 	{
+ 		Endian<uint32> typeAndVersion = subject->type() | subject->version() << AclSubject::versionShift;
+ 		pub(typeAndVersion);
+--- /usr/include/arm/signal.h	2008-02-27 05:37:19.000000000 +0000
++++ /usr/include/arm/signal.h	2008-03-24 09:51:14.000000000 +0000
+@@ -13,6 +13,8 @@
+ 
+ #ifndef _ANSI_SOURCE
+ 
++typedef int sig_atomic_t;
++
+ #ifdef __APPLE_API_OBSOLETE
+ 
+ #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+@@ -20,8 +22,6 @@
+ #define __need_struct_sigcontext
+ #include <arm/_structs.h>
+ 
+-typedef int sig_atomic_t;
+-
+ #endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+ 
+ #endif /* __APPLE_API_OBSOLETE */
+diff --git /usr/include/mach/arm/_structs.h /usr/include/mach/arm/_structs.h
+index e130afa..1f98c98 100644
+--- /usr/include/mach/arm/_structs.h
++++ /usr/include/mach/arm/_structs.h
+@@ -25,7 +25,7 @@ _STRUCT_ARM_EXCEPTION_STATE
+ };
+ #endif /* __DARWIN_UNIX03 */
+
+-#if __DARWIN_UNIX03
++#if __DARWIN_UNIX03 || 1
+ #define _STRUCT_ARM_THREAD_STATE	struct __darwin_arm_thread_state
+ _STRUCT_ARM_THREAD_STATE
+ {
+diff --git /usr/include/arm/_structs.h /usr/include/arm/_structs.h
+index 2834b48..6c14349 100644
+--- /usr/include/arm/_structs.h
++++ /usr/include/arm/_structs.h
+@@ -38,6 +38,14 @@ _STRUCT_MCONTEXT
+ #endif /* _STRUCT_MCONTEXT */
+ #endif /* __need_struct_mcontext */
+ 
++#ifdef __need_mcontext_t
++#undef __need_mcontext_t
++#ifndef _MCONTEXT_T
++#define _MCONTEXT_T
++typedef _STRUCT_MCONTEXT	*mcontext_t;
++#endif /* _MCONTEXT_T */
++#endif /* __need_mcontext_t */
++
+ #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+ #ifndef ARM_MCONTEXT_SIZE
+ #define ARM_MCONTEXT_SIZE       (ARM_THREAD_STATE_COUNT + ARM_VFP_STATE_COUNT + ARM_EXCEPTION_STATE_COUNT) * sizeof(int)
+--- /usr/include/mach/arm/thread_status.h.orig 2006-01-21 00:03:47.000000000 +0100
++++ /usr/include/mach/arm/thread_status.h      2009-09-06 15:08:12.456730542 +0200
+@@ -2,6 +2,7 @@
+ #define _MACH_ARM_THREAD_STATUS_H_
+
+ #define ARM_THREAD_STATE        1
++#define THREAD_STATE_NONE       2
+
+ typedef struct arm_thread_state {
+        unsigned int r0;
+--- /usr/include/utmp.h      2009-09-06 16:19:02.113895580 +0200
++++ /usr/include/utmp.h.orig 2009-09-06 15:53:01.552730577 +0200
+@@ -92,13 +92,13 @@
+        time_t  ll_time;
+        char    ll_line[UT_LINESIZE];
+        char    ll_host[UT_HOSTSIZE];
+-}                                      __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0,__MAC_10_5,__IPHONE_1_2,__IPHONE_2_0);
++}                                      __DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
+
+ struct utmp {
+        char    ut_line[UT_LINESIZE];
+        char    ut_name[UT_NAMESIZE];
+        char    ut_host[UT_HOSTSIZE];
+        long    ut_time;
+-}                                      __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0,__MAC_10_5,__IPHONE_1_2,__IPHONE_2_0);
++}                                      __DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
+
+ #endif /* !_UTMP_H_ */
+

@@ -1,0 +1,15 @@
+Index: ld64/src/Options.h
+===================================================================
+--- ld64/src/Options.h	(Revision 287)
++++ ld64/src/Options.h	(Arbeitskopie)
+@@ -33,6 +33,10 @@
+ #include <ext/hash_set>
+ #include <stdarg.h>
+ 
++/* mg; fixes because of header problems gcc+4.3 */
++#include <cstring>
++#include <limits.h>
++/* end of patch */
+ #include "ObjectFile.h"
+ 
+ extern void throwf (const char* format, ...) __attribute__ ((noreturn));

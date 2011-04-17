@@ -1,0 +1,16 @@
+--- ./src/Options.cpp.orig	2006-06-01 13:13:03.000000000 -0700
++++ ./src/Options.cpp	2006-06-04 09:16:05.000000000 -0700
+@@ -1358,6 +1358,13 @@
+ 			fSDKPaths.push_back(path);
+ 		}
+ 	}
++
++	if(fSDKPaths.size() == 0) {
++#ifdef CROSS_SYSROOT
++		fSDKPaths.push_back(CROSS_SYSROOT);
++#endif
++	}
++
+ 	if ( addStandardLibraryDirectories ) {
+ 		libraryPaths.push_back("/usr/lib");
+ 		libraryPaths.push_back("/usr/local/lib");

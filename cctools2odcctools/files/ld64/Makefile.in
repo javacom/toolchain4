@@ -1,0 +1,83 @@
+builddir = @builddir@
+top_builddir = @top_builddir@
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+bindir		= @bindir@
+
+VPATH = @srcdir@:@srcdir@/src
+
+CC		= @CC@
+CXX             = @CXX@
+CFLAGS          = @CFLAGS@
+CXXFLAGS	= @CXXFLAGS@
+WARNINGS	= @WARNINGS@
+MDYNAMICNOPIC   = @MDYNAMICNOPIC@
+CPPFLAGS        = @CPPFLAGS@
+DEFS            = @DEFS@ @ENDIAN_FLAG@
+LDFLAGS         = @LDFLAGS@
+HAVE_PRIVEXT    = @HAVE_PRIVEXT@
+HAVE_FOREIGN_HEADERS    = @HAVE_FOREIGN_HEADERS@
+UUID_LIBS	= @UUID_LIBS@
+SSL_LIBS	= @SSL_LIBS@
+LTO_DEFS	= @LTO_DEFS@
+LTO_LIBS	= @LTO_LIBS@
+
+ifeq ($(HAVE_PRIVEXT),NO)
+INCPRIVEXT      = -include $(top_srcdir)/include/extern.h
+endif
+
+ifeq ($(HAVE_FOREIGN_HEADERS),YES)
+FORHDRS         = -I$(top_srcdir)/include/foreign
+endif
+
+INSTALL		= @INSTALL@
+INSTALL_PROGRAM	= @INSTALL_PROGRAM@
+transform       = @program_transform_name@
+LDPROG          = $(shell echo ld_classic | sed '$(transform)')
+ASPROG          = $(shell echo as | sed '$(transform)')
+
+MYINCLUDES      = -I$(builddir) -I$(srcdir) -I$(srcdir) -I$(srcdir)/Readers \
+			-I$(srcdir)/Writers -I$(top_builddir)/include \
+			-I$(top_srcdir)/include $(INCPRIVEXT) $(FORHDRS)
+MYWARNINGS      = 
+MYDEFS          = -DDEBUG -DBINDIR="\"$(bindir)\"" -DLDPROG="\"$(LDPROG)\"" \
+		  -DASPROG="\"$(ASPROG)\"" $(LTO_DEFS)
+
+MYLDFLAGS	= -L$(top_builddir)/libstuff
+MYLIBS		= -lstuff $(SSL_LIBS) $(UUID_LIBS) $(LTO_LIBS)
+
+MYCOMPILEFLAGS	= $(WARNINGS) $(MYWARNINGS) $(DEFS) $(MYDEFS) \
+	$(CPPFLAGS) $(MYINCLUDES) $(CFLAGS) $(MDYNAMICNOPIC) 
+
+MYLINKFLAGS	= $(LDFLAGS) $(MYLDFLAGS) $(MYLIBS)
+
+CXXFILES = ld.cpp Options.cpp
+CFILES = debugline.c
+
+OBJS = $(CXXFILES:.cpp=.o)
+OBJS += $(CFILES:.c=.o) 
+
+.cpp.o:
+	$(CXX) $(MYCOMPILEFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+.c.o:
+	$(CC) $(MYCOMPILEFLAGS) -c -o $@ $<
+
+.PHONY: default clean distclean install
+
+default: ld
+
+ld: $(OBJS)
+	$(CXX) -o $@ $^ $(MYLINKFLAGS)
+
+install: ld
+	mkdir -p $(DESTDIR)/$(bindir)
+	$(INSTALL_PROGRAM) ld \
+		$(DESTDIR)/$(bindir)/`echo ld | sed '$(transform)'`
+
+clean:
+	rm -r -f *.o */*.o
+	rm -f ld

@@ -1,0 +1,15 @@
+--- ./src/MachOWriterExecutable.hpp.orig	2008-05-07 14:30:53.000000000 -0500
++++ ./src/MachOWriterExecutable.hpp	2009-06-11 12:31:08.000000000 -0500
+@@ -46,6 +48,12 @@
+ 
+ #include "MachOFileAbstraction.hpp"
+
++#ifndef x86_THREAD_STATE64_COUNT 
++#define x86_THREAD_STATE64_COUNT 42
++#endif
++#ifndef x86_THREAD_STATE64
++#define x86_THREAD_STATE64 4
++#endif
+ 
+ //
+ //

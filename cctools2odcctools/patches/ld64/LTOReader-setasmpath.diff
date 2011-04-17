@@ -1,0 +1,11 @@
+--- src/LTOReader.hpp.orig	2008-07-10 20:15:14.000000000 -0500
++++ src/LTOReader.hpp	2009-07-03 10:58:35.000000000 -0500
+@@ -431,6 +431,8 @@
+ 	
+ 	// create optimizer and add each Reader
+ 	lto_code_gen_t generator = ::lto_codegen_create();
++
++	::lto_codegen_set_assembler_path(generator, BINDIR "/" ASPROG );
+ 	for (std::set<Reader*>::iterator it=fgReaders.begin(); it != fgReaders.end(); ++it) {
+ 		if ( ::lto_codegen_add_module(generator, (*it)->fModule) )
+ 			throwf("lto: could not merge in %s because %s", (*it)->fPath, ::lto_get_error_message());

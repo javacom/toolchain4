@@ -1,0 +1,22 @@
+--- ./misc.c.orig	2003-08-12 19:02:39.000000000 -0500
++++ ./misc.c	2009-06-11 12:30:56.000000000 -0500
+@@ -164,7 +164,7 @@
+ badfmt()
+ {
+ 
+-	errno = EFTYPE;
++	errno = EINVAL;
+ 	err(1, "%s", archive);
+ }
+ 
+--- ./archive.c.orig	2004-11-12 14:16:56.000000000 -0600
++++ ./archive.c	2009-06-11 12:30:56.000000000 -0500
+@@ -151,7 +151,7 @@
+ 		/* Locking seems to not be working */
+ 		case ENOTSUP:
+ 		case EHOSTUNREACH:
+-		case EBADRPC:
++		  /*		case EBADRPC: */
+ 		default:
+ 			/* Filesystem does not support locking */
+ 			break;

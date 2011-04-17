@@ -1,0 +1,41 @@
+8
+
+dir
+159
+http://svn.macosforge.org/repository/odcctools/trunk/files/include/foreign/mach/i386
+http://svn.macosforge.org/repository/odcctools
+
+
+
+2004-11-07T23:26:47.000000Z
+54
+ssen
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a073acdd-5acc-438f-8c47-dd119020c213
+
+thread_status.h
+file
+
+
+
+
+2010-12-29T04:49:45.000000Z
+4618250a3e4751f06caf0e23c55de2b4
+2004-11-07T23:26:47.000000Z
+54
+ssen
+has-props
+

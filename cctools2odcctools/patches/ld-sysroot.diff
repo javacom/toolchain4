@@ -1,0 +1,46 @@
+--- ./misc/libtool.c.orig	2009-06-11 12:30:58.000000000 -0500
++++ ./misc/libtool.c	2009-06-11 12:31:02.000000000 -0500
+@@ -57,6 +57,8 @@
+ #else
+ #endif
+ 
++#include <config.h>
++
+ /* used by error routines as the name of the program */
+ char *progname = NULL;
+ 
+@@ -1035,6 +1037,11 @@
+ 	else{
+ 	    next_root = getenv("NEXT_ROOT");
+ 	}
++	if(next_root == NULL) {
++#ifdef CROSS_SYSROOT
++          next_root = CROSS_SYSROOT;
++#endif
++	}
+ 	if(next_root != NULL){
+ 	    for(i = 0; standard_dirs[i] != NULL; i++){
+ 		p = allocate(strlen(next_root) +
+--- ./ld/ld.c.orig	2009-06-11 12:31:01.000000000 -0500
++++ ./ld/ld.c	2009-06-11 12:31:02.000000000 -0500
+@@ -81,6 +81,8 @@
+ #include "layout.h"
+ #include "pass2.h"
+ 
++#include <config.h>
++
+ /* name of this program as executed (argv[0]) */
+ __private_extern__ char *progname = NULL;
+ /* indication of an error set in error(), for processing a number of errors
+@@ -1916,6 +1918,11 @@
+ 	else{
+ 	    next_root = p;
+ 	}
++       if(next_root == NULL) {
++#ifdef CROSS_SYSROOT
++         next_root = CROSS_SYSROOT;
++#endif
++       }
+ 	if(next_root != NULL){
+ 	    for(i = 0; standard_dirs[i] != NULL; i++){
+ 		p = allocate(strlen(next_root) +

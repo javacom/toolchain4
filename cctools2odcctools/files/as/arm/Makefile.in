@@ -1,0 +1,5 @@
+ARCH	=	arm
+
+CFILES_arm	=	arm.c
+MYDEFS_arm	=	-DARM
+MYLIBS_arm	=	-lstuff

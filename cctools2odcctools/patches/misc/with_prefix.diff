@@ -1,0 +1,33 @@
+--- redo_prebinding.c.orig	2010-04-19 11:02:01.000000000 -0500
++++ redo_prebinding.c	2010-04-19 11:02:17.000000000 -0500
+@@ -937,7 +937,7 @@
+ 	    /*
+ 	     * Run objcunique on the output.
+ 	     */
+-	    objcunique = cmd_with_prefix("objcunique");
++	    objcunique = "/usr/bin/objcunique";
+ 	    if(stat(objcunique, &stat_buf) != -1){
+ 		reset_execute_list();
+ 		add_execute_list(objcunique);
+--- strip.c.orig	2010-04-19 11:02:58.000000000 -0500
++++ strip.c	2010-04-19 11:03:22.000000000 -0500
+@@ -3796,7 +3796,7 @@
+ 	 * Create the ld -r command line and execute it.
+ 	 */
+ 	reset_execute_list();
+-	add_execute_list_with_prefix("ld");
++	add_execute_list(BINDIR "/" LDPROG);
+ 	add_execute_list("-keep_private_externs");
+ 	add_execute_list("-r");
+ 	if(Sflag)
+--- libtool.c.orig	2010-04-19 11:03:54.000000000 -0500
++++ libtool.c	2010-04-19 11:04:28.000000000 -0500
+@@ -3036,7 +3036,7 @@
+ 	if(cmd_flags.prebinding == TRUE){
+ 	    if(stat("/usr/bin/objcunique", &stat_buf) != -1){
+ 		reset_execute_list();
+-		add_execute_list_with_prefix("objcunique");
++		add_execute_list("/usr/bin/objcunique");
+ 		add_execute_list(cmd_flags.output);
+ 		add_execute_list("-prebind");
+ 		for(j = 0; j < cmd_flags.nLdirs; j++)

@@ -1,0 +1,21 @@
+--- swap_headers.c.orig	2009-06-11 21:10:12.000000000 -0500
++++ swap_headers.c	2009-06-11 21:10:50.000000000 -0500
+@@ -24,6 +24,8 @@
+ #define __darwin_i386_float_state i386_float_state
+ #define __darwin_i386_thread_state i386_thread_state
+ 
++#include <sys/types.h>
++
+ #include <mach-o/loader.h>
+ #include <mach/m68k/thread_status.h>
+ #undef MACHINE_THREAD_STATE	/* need to undef these to avoid warnings */
+--- ofile_error.c.orig  2009-09-21 22:10:31.000000000 -0500
++++ ofile_error.c       2009-09-21 22:20:43.000000000 -0500
+@@ -24,6 +24,7 @@
+ #define __darwin_i386_float_state i386_float_state
+ #define __darwin_i386_thread_state i386_thread_state
+ 
++#include <sys/types.h>
+ #include <stdarg.h>
+ #include "stuff/ofile.h"
+ #include "stuff/print.h"
