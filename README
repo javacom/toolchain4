@@ -13,7 +13,7 @@ sudo apt-get install clang
 
 5.  Run
     cd /toolchain4
-    ./toolchain4 buildsys
-    ./toolchain4 cctools
-    ./toolchain4 llvmgcc
-    ./toolchain4 ldid
+    ./toolchain.sh buildsys
+    ./toolchain.sh cctools
+    ./toolchain.sh llvmgcc
+    ./toolchain.sh ldid
