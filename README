@@ -16,4 +16,19 @@ sudo apt-get install clang
     ./toolchain.sh buildsys
     ./toolchain.sh cctools
     ./toolchain.sh llvmgcc
-    ./toolchain.sh ldid
+
+6.  Install as_driver
+    cd /toolchain4/as_driver
+    make
+    cd /usr/bin
+    sudo mv as i686-linux-gnu-as
+    sudo cp -p /toolchain4/as_driver as
+    sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-as .
+    sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-ld .
+
+7.  Test iOS4 sample code
+    cd /toolchain4/Projects/LocalPush
+    make
+    make dist
+    (LocalPush.app & LocalPush.ipa will be in build/4.0/ folder)
+

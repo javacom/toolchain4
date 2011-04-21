@@ -685,7 +685,7 @@ toolchain_extract_firmware() {
 
 # thanks to no.name.11234 for the tip to download the darwin sources
 # from http://www.opensource.apple.com/tarballs
-toolchain_download_darwin_sources_old() {
+toolchain_download_darwin_sources_sys3() {
 
 	if [ -r "${DARWIN_SOURCES_DIR}/xnu-1228.7.58.tar.gz" ] ; then
 		echo "Darwin sources seem to already be downloaded."
@@ -822,16 +822,16 @@ toolchain_llvmgcc() {
 			exit 1
 		fi
 
-		mkdir -p "$SYS_DIR"/"$(dirname $PREFIX)"
-		ln -sf "$PREFIX" "$SYS_DIR"/"$(dirname $PREFIX)"
 	fi
 }
 
 # Follows the build routine for the toolchain described by saurik here:
 # www.saurik.com/id/4
 #
-toolchain_build() {
+
+toolchain_build_sys3() {
 	#local TOOLCHAIN="${IPHONEDEV_DIR}/toolchain"
+	local SYS_DIR="${TOOLCHAIN}/sys${TOOLCHAIN_VERSION}"
 	local LEOPARD_SDK="${SDKS_DIR}/${MACOSX}.sdk"
 	local LEOPARD_SDK_INC="${LEOPARD_SDK}/usr/include"
 	local LEOPARD_SDK_LIBS="${LEOPARD_SDK}/System/Library/Frameworks"
@@ -846,11 +846,37 @@ toolchain_build() {
 	[ ! "`vercmp $TOOLCHAIN_VERSION 2.0`" == "newer" ] && local TARGET="arm-apple-darwin8"
 
 	mkdir -p "${TOOLCHAIN}"
+	if [ ! -d "${LEOPARD_SDK}" ] ; then
+	  if [ ! -f "${SDKS_DIR}/${MACOSX}.pkg" ] ; then
+		error "I couldn't find ${MACOSX}.pkg at: ${SDKS_DIR}"
+		exit 1
+	  else
+		cd "${SDKS_DIR}"; rm -f Payload; xar -xf "${SDKS_DIR}/${MACOSX}.pkg" Payload; cat Payload | zcat | cpio -id
+		# zcat on OSX needs .Z suffix
+		cd "${SDKS_DIR}"; mv SDKs/${MACOSX}.sdk .; rm -fr Payload SDKs
+	  fi
+	fi
+	if [ ! -d "${IPHONE_SDK}" ] ; then
+	  if [ ! -f "${SDKS_DIR}/iPhoneSDKHeadersAndLibs.pkg" ] ; then
+		error "I couldn't find iPhoneSDKHeadersAndLibs.pkg at: ${SDKS_DIR}"
+		exit 1
+	  else
+		cd "${SDKS_DIR}"; rm -f Payload; xar -xf iPhoneSDKHeadersAndLibs.pkg Payload; cat Payload | zcat | cpio -id
+		# zcat on OSX needs .Z suffix
+		cd "${SDKS_DIR}"; mv "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS${TOOLCHAIN_VERSION}.sdk" .; rm -fr Payload Platforms Examples Documentation
+	  fi
+	fi
+	
 
 	extract_sources=1
 	if [ -d "${DARWIN_SOURCES_DIR}/xnu-1228.7.58" ] ; then
 		if ! confirm -N "extract darwin sources again?"; then
 			extract_sources=0
+		fi
+	else
+		if [ ! -r "${DARWIN_SOURCES_DIR}/xnu-1228.7.58.tar.gz" ] ; then
+			echo "Darwin sources seem need to be downloaded."
+			toolchain_download_darwin_sources_sys3
 		fi
 	fi
 
@@ -872,12 +898,17 @@ toolchain_build() {
 	mkdir -p "${SYS_DIR}"
 	cd "${SYS_DIR}"
 
-	if [ ! -f "${FW_DIR}/current" ] ; then
-		error "I couldn't find an iPhone filesystem at: ${FW_DIR}/current"
+	if [ ! -d "${FW_DIR}/firmware${TOOLCHAIN_VERSION}" ] ; then
+	  if [ ! -f "${FW_DIR}/firmware${TOOLCHAIN_VERSION}.tgz" ] ; then
+		error "I couldn't find an iPhone filesystem at: ${FW_DIR}/firmware${TOOLCHAIN_VERSION}.tgz"
 		exit 1
+	  else
+		mkdir -p "${FW_DIR}/firmware${TOOLCHAIN_VERSION}"; cd "${FW_DIR}/firmware${TOOLCHAIN_VERSION}"; tar xzvf ../"firmware${TOOLCHAIN_VERSION}.tgz"
+	  fi
 	fi
 
-	mount_img "${FW_DIR}/current" "${MNT_DIR}"
+	#mount_img "${FW_DIR}/current" "${MNT_DIR}"
+	local MNT_FW_DIR="${FW_DIR}/firmware${TOOLCHAIN_VERSION}"
 
 	cp_fw=1
 	if [ -d $SYS_DIR ] && [[ `ls -A $SYS_DIR | wc -w` > 0 ]]; then
@@ -889,16 +920,17 @@ toolchain_build() {
 
 	if [ "x$cp_fw" == "x1" ]; then
 		message_status "Copying required iPhone filesystem components..."
-		cp -R -p ${MNT_DIR}/usr "$SYS_DIR"
-		cp -R -p ${MNT_DIR}/System/Library/Frameworks "$SYS_DIR/System/Library"
-		cp -R -p ${MNT_DIR}/System/Library/PrivateFrameworks "$SYS_DIR/System/Library"
+        	mkdir -p "$SYS_DIR/System/Library"
+		cp -R -p ${MNT_FW_DIR}/usr "$SYS_DIR"
+		cp -R -p ${MNT_FW_DIR}/System/Library/Frameworks "$SYS_DIR/System/Library"
+		cp -R -p ${MNT_FW_DIR}/System/Library/PrivateFrameworks "$SYS_DIR/System/Library"
 	fi
 
-	umount_img "${FW_DIR}/current"
+	#umount_img "${FW_DIR}/current"
 
 	# Presently working here and below
 	copy_headers=1
-	if [ -d "usr/include" ] ; then
+	if [ -d "${SYS_DIR}/usr/include" ] ; then
 		if ! confirm -N "copy headers again?"; then
 			copy_headers=0
 		fi
@@ -907,8 +939,9 @@ toolchain_build() {
 	if [ "x$copy_headers" == "x1" ]; then
 	message_status "Copying SDK headers..."
 	echo "Leopard"
-	cp -R -p "${LEOPARD_SDK_INC}" usr/include
-	cd usr/include
+	mkdir -p "$SYS_DIR/usr/lib"
+	cp -R -p "${LEOPARD_SDK_INC}" ${SYS_DIR}/usr/
+	cd ${SYS_DIR}/usr/include
 	ln -sf . System
 
 	cp -R -pf "${IPHONE_SDK_INC}"/* .
@@ -1078,7 +1111,7 @@ toolchain_build() {
 	# Some patches could fail if you rerun (rebuild) ./toolchain.sh build
 
 	#wget -qO- http://svn.telesphoreo.org/trunk/tool/include.diff | patch -p3 
-	pushd "usr/include"
+	pushd "${SYS_DIR}/usr/include"
 	patch -p3 -l -N < "${HERE}/patches/include.diff"
 
 	#wget -qO arm/locks.h http://svn.telesphoreo.org/trunk/tool/patches/locks.h 
@@ -1122,6 +1155,10 @@ toolchain_build() {
 	cp -R -pf dylib1.o dylib1.10.5.o
 	fi
 
+	mkdir -p "$SYS_DIR"/"$(dirname $PREFIX)"
+	ln -sf "$PREFIX" "$SYS_DIR"/"$(dirname $PREFIX)"
+
+
 #	Copying Frameworks
 #pushd sdks/iPhoneOS4.2.sdk/System/Library/Frameworks
 #for i in *; do x=`basename $i '.framework'`; cp $i/$x "$SYS_DIR/System/Library/Frameworks/$i/$x"; done
@@ -1154,10 +1191,18 @@ toolchain_sys() {
 	        rm -fr "${SYS_DIR}"
 	        mkdir -p "${SYS_DIR}"
 		message_status "Copying System and usr from iPhoneOS${TOOLCHAIN_VERSION}.sdk"
-		if [ -f "${IPHONE_SDK}.tgz" ]; then
-			rm -fr "$IPHONE_SDK"
-			cd sdks; tar xzvf iPhoneOS${TOOLCHAIN_VERSION}.sdk.tgz
+		if [ -f "${IPHONE_SDK}.tgz" ] ; then
+		  rm -fr "$IPHONE_SDK"
+		  cd "${SDKS_DIR}"; tar xzvf iPhoneOS${TOOLCHAIN_VERSION}.sdk.tgz
+	  	elif [ ! -f "${SDKS_DIR}/${IPHONE_SDK}.pkg" ] ; then
+		  error "I couldn't find ${IPHONE_SDK}.pkg at: ${SDKS_DIR}"
+		  exit 1
+	  	else
+		  cd "${SDKS_DIR}"; rm -f Payload; xar -xf "${SDKS_DIR}/${IPHONE_SDK}.pkg" Payload; cat Payload | zcat | cpio -id
+		  # zcat on OSX needs .Z suffix
+		  cd "${SDKS_DIR}"; mv SDKs/${IPHONE_SDK}.sdk .; rm -fr Payload SDKs
 		fi
+
                 pushd "${IPHONE_SDK}"
 		cp -R -pf System "${SYS_DIR}"
 		cp -R -pf usr "${SYS_DIR}"
@@ -1171,9 +1216,13 @@ toolchain_sys() {
 			echo $f
 			mkdir -p ${SYS_DIR}/usr/include/$f
 			cp -Rf -p $i/Headers/* ${SYS_DIR}/usr/include/$f/
-			done
+		done
 		popd
 	fi
+
+	mkdir -p "$SYS_DIR"/"$(dirname $PREFIX)"
+	ln -sf "$PREFIX" "$SYS_DIR"/"$(dirname $PREFIX)"
+
 }
 
 class_dump() {
@@ -1342,6 +1391,14 @@ case $1 in
 		message_action "llvmgcc build."
 		;;
 
+	build313)
+		check_environment
+		message_action "Building the sys3.1.3 Headers and Libraries..."
+		TOOLCHAIN_VERSION=3.1.3
+		toolchain_build_sys3
+		message_action "sys3.1.3 folder built!"
+		;;
+	
 	buildsys)
 		check_environment
 		message_action "Building the sys Headers and Libraries..."
@@ -1363,6 +1420,28 @@ case $1 in
 		message_action "It seems like the toolchain built!"
 		;;
 	
+	xar)
+		check_environment
+		message_action "Preparing to make xar..."
+		if ! wget -O - http://xar.googlecode.com/files/xar-1.5.2.tar.gz | tar -zx; then
+			error "Failed to get and extract xar-1.5.2 Check errors."
+			exit 1
+		fi
+
+		pushd xar-1.5.2
+		if ! ./configure; then
+			error "Failed to configre xar-1.5.2, you need to innstall libxml2-dev"
+			exit 1
+                fi
+
+		if ! sudo make install; then
+			error "Failed to make xar-1.5.2"
+			exit 1
+		fi
+
+		popd
+		message_action "xar built."
+		;;
 	ldid)
 		check_environment
 		message_action "Preparing to make ldid..."
@@ -1445,6 +1524,9 @@ case $1 in
 		echo
 		echo	"    ${BOLD}build${ENDF}"
 		echo -e "    \tAcquire and build the toolchain sources."
+		echo
+		echo	"    ${BOLD}build313${ENDF}"
+		echo -e "    \tAcquire and build the sys3.1.3 Headers & Libraries."
 		echo
 		echo	"    ${BOLD}buildsys${ENDF}"
 		echo -e "    \tAcquire and build the sys Headers & Libraries."

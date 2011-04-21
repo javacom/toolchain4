@@ -9,13 +9,13 @@ struct S_prg {
 };
 
 struct S_prg asTab[] = {
-	"i386", "/usr/bin/i386-redhat-linux-as",
+	"i686", "/usr/bin/i686-linux-gnu-as",
 	"arm", "/usr/bin/arm-apple-darwin9-as",
 	NULL
 };
 
 struct S_prg ldTab[] = {
-	"i386", "/usr/bin/i386-redhat-linux-ld",
+	"i686", "/usr/bin/i686-linux-gnu-ld",
 	"arm", "/usr/bin/arm-apple-darwin9-ld",
 	NULL
 };
@@ -25,9 +25,9 @@ int verbose = 0;
 main(int ac, char **av)
 {
 	int	i;
-	char	*arch = "i386";
+	char	*arch = "i686";
 
-	arch	= "i386";
+	arch	= "i686";
 
 	for	(i=1; i<ac; i++)
 	{
