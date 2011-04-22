@@ -12,6 +12,7 @@ sudo apt-get install clang
 4.  Put iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
     
     or build xar
+    sudo apt-get install libxml2-dev
     ./toolchain.sh xar
     then put iPhoneSDK4_2.pkg to /toolchain4/sdks/
 
