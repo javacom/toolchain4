@@ -10,6 +10,10 @@ sudo apt-get install clang
 3.  Create /toolchain4
 
 4.  Put iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
+    
+    or build xar
+    ./toolchain.sh xar
+    then put iPhoneSDK4_2.pkg to /toolchain4/sdks/
 
 5.  Run
     cd /toolchain4
