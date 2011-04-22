@@ -772,7 +772,7 @@ toolchain_cctools() {
 toolchain_llvmgcc() {
 	local GCC_DIR="$SRC_DIR/gcc"
 	local TARGET="arm-apple-darwin9"
-	if [ -z $(which ${TARGET}-ld) ] ; then 
+	if [ -z $(which ${TARGET}-ar) ] ; then 
 		export PATH="${PREFIX}/bin":"${PATH}"
 	fi
 
@@ -1194,13 +1194,13 @@ toolchain_sys() {
 		if [ -f "${IPHONE_SDK}.tgz" ] ; then
 		  rm -fr "$IPHONE_SDK"
 		  cd "${SDKS_DIR}"; tar xzvf iPhoneOS${TOOLCHAIN_VERSION}.sdk.tgz
-	  	elif [ ! -f "${SDKS_DIR}/${IPHONE_SDK}.pkg" ] ; then
-		  error "I couldn't find ${IPHONE_SDK}.pkg at: ${SDKS_DIR}"
+	  	elif [ ! -f "${SDKS_DIR}/iPhoneSDK4_2.pkg" ] ; then
+		  error "I couldn't find iPhoneSDK4_2.pkg at: ${SDKS_DIR}"
 		  exit 1
 	  	else
-		  cd "${SDKS_DIR}"; rm -f Payload; xar -xf "${SDKS_DIR}/${IPHONE_SDK}.pkg" Payload; cat Payload | zcat | cpio -id
+		  cd "${SDKS_DIR}"; rm -f Payload; xar -xf "${SDKS_DIR}/iPhoneSDK4_2.pkg" Payload; cat Payload | zcat | cpio -id
 		  # zcat on OSX needs .Z suffix
-		  cd "${SDKS_DIR}"; mv SDKs/${IPHONE_SDK}.sdk .; rm -fr Payload SDKs
+		  cd "${SDKS_DIR}"; mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS${TOOLCHAIN_VERSION}.sdk .; rm -fr Platforms
 		fi
 
                 pushd "${IPHONE_SDK}"
@@ -1423,45 +1423,56 @@ case $1 in
 	xar)
 		check_environment
 		message_action "Preparing to make xar..."
-		if ! wget -O - http://xar.googlecode.com/files/xar-1.5.2.tar.gz | tar -zx; then
-			error "Failed to get and extract xar-1.5.2 Check errors."
-			exit 1
+		download_xar=1
+		if [ -f xar-1.5.2.tar.gz ] ; then
+		  if ! confirm -N "Download xar again?"; then
+		        download_xar=0
+		  fi
 		fi
-
-		pushd xar-1.5.2
-		if ! ./configure; then
-			error "Failed to configre xar-1.5.2, you need to innstall libxml2-dev"
+	        if [ "x$download_xar" == "x1" ]; then
+		  wget -N http://xar.googlecode.com/files/xar-1.5.2.tar.gz
+		fi
+		extract_xar=1
+		if [ -d xar-1.5.2 ] ; then
+		  if ! confirm -N "Extract xar again?"; then
+		        extract_xar=0
+		  fi
+		fi
+	        if [ "x$extract_xar" == "x1" ]; then
+		  tar xzf xar-1.5.2.tar.gz
+		fi
+		cd xar-1.5.2
+		if ! (./configure) ; then
+			error "Failed to configre xar-1.5.2, you need to install libxml2-dev"
 			exit 1
                 fi
 
-		if ! sudo make install; then
+		if ! (make && sudo make install); then
 			error "Failed to make xar-1.5.2"
 			exit 1
 		fi
-
-		popd
 		message_action "xar built."
 		;;
 	ldid)
 		check_environment
 		message_action "Preparing to make ldid..."
+		download_ldid=1
 		if [ -f  ldid-1.0.610.tgz ] ; then
-		  download_ldid=1
 		  if ! confirm -N "Download ldid again?"; then
 		        download_ldid=0
 		  fi
-	          if [ "x$download_ldid" == "x1" ]; then
-		    wget -N http://svn.telesphoreo.org/trunk/data/ldid/ldid-1.0.610.tgz
-		  fi
 		fi
+	        if [ "x$download_ldid" == "x1" ]; then
+		  wget -N http://svn.telesphoreo.org/trunk/data/ldid/ldid-1.0.610.tgz
+		fi
+		extract_ldid=1
 		if [ -d  ldid-1.0.610 ] ; then
-		  extract_ldid=1
 		  if ! confirm -N "Extract ldid again?"; then
 		        extract_ldid=0
 		  fi
-	          if [ "x$extract_ldid" == "x1" ]; then
-		    tar xzf ldid-1.0.610.tgz
-		  fi
+		fi
+	        if [ "x$extract_ldid" == "x1" ]; then
+		  tar xzf ldid-1.0.610.tgz
 		fi
 		cd ldid-1.0.610
 		g++ -I . -o util/ldid{,.cpp} -x c util/{lookup2,sha1}.c
