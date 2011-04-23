@@ -8,6 +8,8 @@ sudo apt-get install git autoconf gawk libssl-dev uuid-dev
 sudo apt-get install clang
 
 3.  Create /toolchain4
+    sudo mkdir -p /toolchain4
+    sudo chown -R <yourusername>:<yourusername> /toolchain4
 
 4.  Put iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
     
@@ -16,11 +18,12 @@ sudo apt-get install clang
     ./toolchain.sh xar
     then put iPhoneSDK4_2.pkg to /toolchain4/sdks/
 
-5.  Run
+5.  Build headers tools and gcc 
     cd /toolchain4
     ./toolchain.sh buildsys
     ./toolchain.sh cctools
     ./toolchain.sh llvmgcc
+    ./toolchain.sh ldid
 
 6.  Install as_driver
     cd /toolchain4/as_driver

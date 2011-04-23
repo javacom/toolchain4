@@ -1476,7 +1476,7 @@ case $1 in
 		fi
 		cd ldid-1.0.610
 		g++ -I . -o util/ldid{,.cpp} -x c util/{lookup2,sha1}.c
-		sudo cp -a util/ldid ${TOOLCHAIN}/pre/bin/
+		cp -a util/ldid ${TOOLCHAIN}/pre/bin/
 		message_action "ldid built."
 		;;
 

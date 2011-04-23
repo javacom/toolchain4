@@ -98,8 +98,7 @@ PCH=$(wildcard *.pch)
 INFOPLIST=$(wildcard *Info.plist)
 
 CFLAGS += -I"$(SRCDIR1)"
-
-CPPFLAGS=$CFLAGS
+CPPLAGS += -I"$(SRCDIR1)"
 
 all:	$(PROJECTNAME)
 
@@ -125,7 +124,7 @@ ifneq ($(RESOURCES),)
 endif
 	cp $(INFOPLIST) $(BUILDDIR)/$(APPFOLDER)/Info.plist
 	@echo "APPL????" > $(BUILDDIR)/$(APPFOLDER)/PkgInfo
-	#export CODESIGN_ALLOCATE=$(toolchain)/pre/bin/arm-apple-darwin9-codesign_allocate; ldid -S $(PROJECTNAME)
+	export CODESIGN_ALLOCATE=$(toolchain)/pre/bin/arm-apple-darwin9-codesign_allocate; $(toolchain)/pre/bin/ldid -S $(PROJECTNAME)
 	mv $(PROJECTNAME) $(BUILDDIR)/$(APPFOLDER)
 	mkdir $(BUILDDIR)/Payload
 	cd $(BUILDDIR)/Payload; ln -s ../$(APPFOLDER) .

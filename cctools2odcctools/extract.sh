@@ -181,5 +181,6 @@ if [ $MAKEDISTFILE -eq 1 ]; then
     mv ${DISTDIR} ${DISTDIR}-$DATE
     tar jcf ${DISTDIR}-$DATE.tar.bz2 ${DISTDIR}-$DATE
 fi
+patch odcctools/misc/Makefile.in < patches/misc/Makefile.in.diff
 
 exit 0
