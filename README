@@ -1,15 +1,15 @@
 1.  Ubuntu 10.10 iPhone Toolchain 4
 
-2.  Install the following packages
+2.  Install the following packages in Ubuntu
 
-sudo apt-get update
-sudo apt-get install bison flex build-essential wget patch
-sudo apt-get install git autoconf gawk libssl-dev uuid-dev
-sudo apt-get install clang
+    sudo apt-get update
+    sudo apt-get install bison flex build-essential wget patch
+    sudo apt-get install git autoconf gawk libssl-dev uuid-dev
+    sudo apt-get install clang
 
 3.  Clone Project
     cd /
-    sudo git clone http://github.com/javacom/toolchain4.git
+    sudo git clone git://github.com/javacom/toolchain4.git
     sudo chown -R <yourusername>:<yourusername> /toolchain4
 
 4.  Put iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
