@@ -40,3 +40,10 @@ sudo apt-get install clang
     make dist
     (LocalPush.app & LocalPush.ipa will be in build/4.0/ folder)
 
+8.  Checkout the updated UICatalog in svn here
+    svn checkout http://apiexplorer.googlecode.com/svn/trunk/UICatalog UICatalog-read-only
+    cd UICatalog-read-only 
+    make -f Makefile.ios4 
+    make -f Makefile.ios4 dist
+    (Then install the build/4.0/UICatalog.ipa to iPhone for testing)
+
