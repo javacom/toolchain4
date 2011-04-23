@@ -1,54 +1,33 @@
-# Makefile for iPhone Application for iPhone gcc compiler (SDK Headers)
+# Makefile for gcc compiler for toolchain 4 (SDK Headers)
 
-PROJECTNAME=Essais
+PROJECTNAME:=MyApp
+APPFOLDER:=$(PROJECTNAME).app
+INSTALLFOLDERi:=$(PROJECTNAME).app
 
-#CC=arm-apple-darwin9-gcc
-CC=clang -ccc-host-triple arm-apple-darwin9 -I/usr/toolchain4/toolchain/sys/usr/include/
-
-MINIMUMVERSION:=3.2
-#MINIMUMVERSION:=4.0
-#LD = $(CC)
-LD=arm-apple-darwin9-gcc
+TOOLCHAIN:=/toolchain4
+SDK:=$(TOOLCHAIN)/sys
+MINIMUMVERSION:=4.0
+DEPLOYMENTTARGET:=$(MINIMUMVERSION)
+IPHONEOSMINVERSION:=40000
+#define __IPHONE_3_0     30000
+#define __IPHONE_4_0     40000
+#define __IPHONE_3_0     30000
+#define __IPHONE_4_0     40000
+#define __IPHONE_4_1     40100
+#define __IPHONE_4_2     40200
 DEBUG=DEBUGOFF
 
-SRCDIR=./Classes
-RESDIR=./Resources
-BUILDDIR=./build/$(MINIMUMVERSION)
-BUNDLE=$(PROJECTNAME).app
+#CC:=$(TOOLCHAIN)/pre/bin/arm-apple-darwin9-gcc
+CC:=clang -ccc-host-triple arm-apple-darwin9 
+CPP:=$(TOOLCHAIN)/pre/bin/arm-apple-darwin9-g++
+LD:=$(TOOLCHAIN)/pre/bin/arm-apple-darwin9-gcc
 
-#----------------- CFLAGS
-CFLAGS	+= -Wall -std=gnu99
-CFLAGS += -Diphoneos_version_min=$(MINIMUMVERSION)
-ifeq ($(DEBUG),DEBUGOFF)
-CFLAGS += -O0 -g0
-else
-CFLAGS += -g
-endif
-CFLAGS += -Wno-attributes -Wno-trigraphs -Wreturn-type -Wunused-variable
-CFLAGS += -D$(DEBUG)
 
-#----------------- CPPFLAGS
-ifeq ($(DEBUG),DEBUGOFF)
-CPPFLAGS += -g0 -O2
-else
-CPPFLAGS += -g
-endif
-CPPFLAGS += -Diphoneos_version_min=$(MINIMUMVERSION)
-CPPFLAGS += -Wno-attributes -Wno-trigraphs -Wreturn-type -Wunused-variable
-CPPFLAGS += $(addprefix -I,$(SRCDIR))
-CPPFLAGS += -I"$(SDK)/usr/include/c++/4.2.1" 
-CPPFLAGS += -I"$(SDK)/usr/include/c++/4.2.1/armv7-apple-darwin9" 
-CPPFLAGS += -D$(DEBUG)
-
-#----------------- LDFLAGS
-#LDFLAGS	+=	-arch arm -lobjc
-LDFLAGS	+=	-arch arm \
-		-bind_at_load \
-		-framework Foundation \
-		-framework CoreFoundation \
-		-framework UIKit \
-		-framework CoreGraphics \
-		-w
+LDFLAGS := -lobjc -Obj-C
+LDFLAGS += -framework CoreFoundation 
+LDFLAGS += -framework Foundation 
+LDFLAGS += -framework UIKit 
+LDFLAGS += -framework CoreGraphics
 //LDFLAGS += -framework AVFoundation
 //LDFLAGS += -framework AddressBook
 //LDFLAGS += -framework AddressBookUI
@@ -84,66 +63,96 @@ LDFLAGS	+=	-arch arm \
 //LDFLAGS += -framework JavaScriptCore
 //LDFLAGS += -framework PhotoLibrary
 
+LDFLAGS += -isysroot $(SDK)
+//LDFLAGS += -F"$(SDK)/System/Library/Frameworks"
+LDFLAGS += -F"$(SDK)/System/Library/PrivateFrameworks"
+LDFLAGS += -Wl,-dead_strip -all_load -miphoneos-version-min=$(MINIMUMVERSION)
+LDFLAGS += -bind_at_load
+LDFLAGS += -multiply_defined suppress
+LDFLAGS += -arch=armv6
+//LDFLAGS += -march=armv6
+//LDFLAGS += -mcpu=arm1176jzf-s 
 
-all:	$(PROJECTNAME) bundle
+CFLAGS += -ObjC -fblocks
+CFLAGS += -std=c99 #-Wall 
+CFLAGS += -isysroot $(SDK)
+CFLAGS += -D__IPHONE_OS_VERSION_MIN_REQUIRED=$(IPHONEOSMINVERSION)
+ifeq ($(DEBUG),DEBUGOFF)
+CFLAGS += -g0 -O2
+else
+CFLAGS += -g
+CFLAGS += -D$(DEBUG)
+endif
+CFLAGS += -Wno-attributes -Wno-trigraphs -Wreturn-type -Wunused-variable
 
-OBJS+=$(patsubst %.m,%.o,$(wildcard $(SRCDIR)/*.m))
-OBJS+=$(patsubst %.c,%.o,$(wildcard $(SRCDIR)/*.c))
-OBJS+=$(patsubst %.mm,%.o,$(wildcard $(SRCDIR)/*.mm))
-OBJS+=$(patsubst %.cpp,%.o,$(wildcard $(SRCDIR)/*.cpp))
-OBJS+=$(patsubst %.m,%.o,$(wildcard ./*.m))
-OBJS+=$(patsubst %.c,%.o,$(wildcard ./*.c))
-PCH=$(wildcard *.pch)
-RESOURCES=$(wildcard $(RESDIR)/*)
-RESOURCES+=$(wildcard ./*.png)
-NIBS=$(patsubst %.xib,%.nib,$(wildcard Xib/*.xib))
+ifeq ($(DEBUG),DEBUGOFF)
+CPPFLAGS += -g0 -O2
+else
+CPPFLAGS += -g
+CPPFLAGS += -D$(DEBUG)
+endif
+CPPFLAGS += -isysroot $(SDK)
+CPPFLAGS += -D__IPHONE_OS_VERSION_MIN_REQUIRED=$(IPHONEOSMINVERSION)
+CPPFLAGS += -Wno-attributes -Wno-trigraphs -Wreturn-type -Wunused-variable
+CPPFLAGS += -I"$(SDK)/usr/include/c++/4.2.1" 
+CPPFLAGS += -I"$(SDK)/usr/include/c++/4.2.1/armv7-apple-darwin9" 
 
+BUILDDIR=./build/$(MINIMUMVERSION)
+SRCDIR1=.
+OBJS+=$(patsubst %.m,%.o,$(wildcard $(SRCDIR1)/*.m))
+OBJS+=$(patsubst %.c,%.o,$(wildcard $(SRCDIR1)/*.c))
+PCH:=$(wildcard *.pch)
+INFOPLIST:=$(wildcard *Info.plist)
 
-$(PROJECTNAME): $(OBJS)
-	$(LD) $(LDFLAGS) $(filter %.o,$^) -o $@ 
-	ldid -S $(PROJECTNAME)
+CFLAGS += -I"$(SRCDIR1)"
+CPPLAGS += -I"$(SRCDIR1)"
 
-bundle: $(PROJECTNAME)
-	@mkdir -p $(BUNDLE)
-	@cp $(PROJECTNAME) $(BUNDLE)
-	@cp $(RESOURCES) $(BUNDLE)
+all:	$(PROJECTNAME)
 
-%.o:	%.m %.h $(PCH) $(filter-out $(patsubst %.o,%.h,$(OBJS)), $(wildcard $(SRCDIR)/*.h))
-	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
+$(PROJECTNAME):	$(OBJS)
+	export IPHONEOS_DEPLOYMENT_TARGET=$(DEPLOYMENTTARGET);$(LD) $(LDFLAGS) $(filter %.o,$^) -o $@ 
 
 %.o:	%.m
 	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
 
-%.o:	%.c %.h $(PCH)
+%.o:	%.c
 	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
 
-%.o:	%.mm %.h $(PCH) $(filter-out $(patsubst %.o,%.h,$(OBJS)), $(wildcard $(SRCDIR)/*.h))
+%.o:	%.cpp
 	$(CPP) --include $(PCH) -c $(CPPFLAGS) $< -o $@
 
-%.o:	%.cpp %.h $(PCH)
-	$(CPP) --include $(PCH) -c $(CPPFLAGS) $< -o $@
+dist:	$(PROJECTNAME)
+	rm -rf $(BUILDDIR)
+	mkdir -p $(BUILDDIR)/$(APPFOLDER)
+ifneq ($(RESOURCES),)
+	cp -r $(RESOURCES) $(BUILDDIR)/$(APPFOLDER)
+	rm -fr $(BUILDDIR)/$(APPFOLDER)/.svn
+	rm -fr $(BUILDDIR)/$(APPFOLDER)/*/.svn
+endif
+	cp $(INFOPLIST) $(BUILDDIR)/$(APPFOLDER)/Info.plist
+	@echo "APPL????" > $(BUILDDIR)/$(APPFOLDER)/PkgInfo
+	export CODESIGN_ALLOCATE=$(TOOLCHAIN)/pre/bin/arm-apple-darwin9-codesign_allocate; $(TOOLCHAIN)/pre/bin/ldid -S $(PROJECTNAME)
+	mv $(PROJECTNAME) $(BUILDDIR)/$(APPFOLDER)
+	mkdir -p $(BUILDDIR)/Payload
+	cd $(BUILDDIR)/Payload; ln -s ../$(APPFOLDER) .
+	cd $(BUILDDIR); zip -r $(PROJECTNAME).ipa Payload > /dev/null
+	rm -fr $(BUILDDIR)/Payload
 
-deploy:
-	@ssh root@$(IP) "cd /Applications/$(BUNDLE) && rm -R * || echo 'not found' "
-	@scp -rp $(BUNDLE) root@$(IP):/Applications
-	@ssh root@$(IP) "killall SpringBoard"
+install: dist
+	ping -t 3 -c 1 $(IPHONE_IP)
+	ssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'
+	scp -r $(BUILDDIR)/$(APPFOLDER) root@$(IPHONE_IP):/Applications/$(INSTALLFOLDER)
+	@echo "Application $(INSTALLFOLDER) installed"
+	ssh mobile@$(IPHONE_IP) 'uicache'
 
-deb : $(PROJECTNAME).deb
-
-$(PROJECTNAME).deb : $(PROJECTNAME) bundle
-	mkdir -p DEB/DEBIAN
-	mkdir -p DEB/Applications
-	cp control DEB/DEBIAN
-	cp -r $(BUNDLE) DEB/Applications
-	dpkg-deb -b DEB $(PROJECTNAME).deb
-	(cp $(PROJECTNAME).deb /var/www/html/debs;\
-	cd /var/www/html/debs;\
-	dpkg-scanpackages -m . /dev/null > Packages;\
-	gzip -f Packages )
+uninstall:
+	ping -t 3 -c 1 $(IPHONE_IP)
+	ssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'
+	@echo "Application $(INSTALLFOLDER) uninstalled"
 
 clean:
-	@rm -f *.o */*.o $(PROJECTNAME)
-	@rm -Rf $(BUNDLE)
-	@rm -Rf DEB
-	@rm $(PROJECTNAME).deb
+	@rm -f $(SRCDIR1)/*.o
+	@rm -rf $(BUILDDIR)
+	@rm -f $(PROJECTNAME)
 
+.PHONY: all dist install uninstall clean
