@@ -7,8 +7,9 @@ sudo apt-get install bison flex build-essential wget patch
 sudo apt-get install git autoconf gawk libssl-dev uuid-dev
 sudo apt-get install clang
 
-3.  Create /toolchain4
-    sudo mkdir -p /toolchain4
+3.  Clone Project
+    cd /
+    sudo git clone http://github.com/javacom/toolchain4.git
     sudo chown -R <yourusername>:<yourusername> /toolchain4
 
 4.  Put iPhoneOS4.2.sdk.tgz to /toolchain4/sdks/
@@ -32,7 +33,6 @@ sudo apt-get install clang
     sudo mv as i686-linux-gnu-as
     sudo cp -p /toolchain4/as_driver/as_driver as
     sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-as .
-    sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-ld .
 
 7.  Test iOS4 sample code
     cd /toolchain4/Projects/LocalPush
