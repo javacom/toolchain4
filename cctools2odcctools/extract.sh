@@ -74,7 +74,7 @@ misc/redo_prebinding.nomalloc.diff misc/libtool_lipo_transform.diff \
 otool/nolibmstub.diff otool/noobjc.diff \
 ld64/LTOReader-setasmpath.diff include/mach/machine_armv7.diff \
 ld/ld-nomach.diff libstuff/cmd_with_prefix.diff ld64/cstdio.diff \
-misc/with_prefix.diff misc/bootstrap_h.diff misc/Makefile.in.diff"
+misc/with_prefix.diff misc/bootstrap_h.diff"
 
 ADDEDFILESDIR=${TOPSRCDIR}/files
 
@@ -86,7 +86,6 @@ fi
 mkdir -p ${DISTDIR}
 [ -f "${CCTOOLSDISTFILE}" ] || wget http://www.opensource.apple.com/tarballs/cctools/${CCTOOLSDISTFILE}
 tar ${TARSTRIP}=1 -zxf ${CCTOOLSDISTFILE} -C ${DISTDIR}
-cp files/misc/Makefile.in odcctools/misc
 
 [ -f "${LD64DISTFILE}" ] || wget http://www.opensource.apple.com/tarballs/ld64/${LD64DISTFILE}
 mkdir -p ${DISTDIR}/ld64
