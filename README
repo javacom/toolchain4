@@ -27,7 +27,7 @@ sudo apt-get install clang
     make
     cd /usr/bin
     sudo mv as i686-linux-gnu-as
-    sudo cp -p /toolchain4/as_driver as
+    sudo cp -p /toolchain4/as_driver/as_driver as
     sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-as .
     sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-ld .
 
