@@ -113,13 +113,13 @@ $(PROJECTNAME):	$(OBJS)
 	export IPHONEOS_DEPLOYMENT_TARGET=$(DEPLOYMENTTARGET);$(LD) $(LDFLAGS) $(filter %.o,$^) -o $@ 
 
 %.o:	%.m
-	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
+	$(CC) -include $(PCH) -c $(CFLAGS) $< -o $@
 
 %.o:	%.c
-	$(CC) --include $(PCH) -c $(CFLAGS) $< -o $@
+	$(CC) -include $(PCH) -c $(CFLAGS) $< -o $@
 
 %.o:	%.cpp
-	$(CPP) --include $(PCH) -c $(CPPFLAGS) $< -o $@
+	$(CPP) -include $(PCH) -c $(CPPFLAGS) $< -o $@
 
 dist:	$(PROJECTNAME)
 	rm -rf $(BUILDDIR)
