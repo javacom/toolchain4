@@ -1169,6 +1169,65 @@ toolchain_build_sys3() {
 }
 
 
+toolchain_sys43() {
+	#local TOOLCHAIN="${IPHONEDEV_DIR}/toolchain"
+	local TOOLCHAIN_VERSION="4.3"
+	local PKGVERSION="4_3"
+        local SYS_DIR="${TOOLCHAIN}/sys43"
+	local IPHONE_SDK="${SDKS_DIR}/iPhoneOS${TOOLCHAIN_VERSION}.sdk"
+	local IPHONE_SDK_INC="${IPHONE_SDK}/usr/include"
+	local IPHONE_SDK_LIBS="${IPHONE_SDK}/System/Library/Frameworks"
+	local TARGET="arm-apple-darwin9"
+	[ ! "`vercmp $TOOLCHAIN_VERSION 2.0`" == "newer" ] && local TARGET="arm-apple-darwin8"
+
+	mkdir -p "${TOOLCHAIN}"
+	mkdir -p "${SYS_DIR}"
+
+	copy_headers=1
+	if [ -d "${SYS_DIR}/usr/include" ] ; then
+		if ! confirm -N "copy headers again?"; then
+			copy_headers=0
+		fi
+	fi
+
+	if [ "x$copy_headers" == "x1" ]; then
+	        rm -fr "${SYS_DIR}"
+	        mkdir -p "${SYS_DIR}"
+		message_status "Copying System and usr from iPhoneOS${TOOLCHAIN_VERSION}.sdk"
+		if [ -f "${IPHONE_SDK}.tgz" ] ; then
+		  rm -fr "$IPHONE_SDK"
+		  cd "${SDKS_DIR}"; tar xzvf iPhoneOS${TOOLCHAIN_VERSION}.sdk.tgz
+	  	elif [ ! -f "${SDKS_DIR}/iPhoneSDK${PKGVERSION}.pkg" ] ; then
+		  error "I couldn't find iPhoneSDK${PKGVERSION}.pkg at: ${SDKS_DIR}"
+		  exit 1
+	  	else
+		  cd "${SDKS_DIR}"; rm -f Payload; xar -xf "${SDKS_DIR}/iPhoneSDK${PKGVERSION}.pkg" Payload; cat Payload | zcat | cpio -id
+		  # zcat on OSX needs .Z suffix
+		  cd "${SDKS_DIR}"; mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS${TOOLCHAIN_VERSION}.sdk .; rm -fr Platforms
+		fi
+
+                pushd "${IPHONE_SDK}"
+		cp -R -pf System "${SYS_DIR}"
+		cp -R -pf usr "${SYS_DIR}"
+		popd
+
+		message_status "Copying Frameworks headers from iPhoneOS${TOOLCHAIN_VERSION}.sdk"
+		pushd "${IPHONE_SDK_LIBS}"
+		for i in *.framework
+		do
+			f=`basename $i .framework`
+			echo $f
+			mkdir -p ${SYS_DIR}/usr/include/$f
+			cp -Rf -p $i/Headers/* ${SYS_DIR}/usr/include/$f/
+		done
+		popd
+	fi
+
+	mkdir -p "$SYS_DIR"/"$(dirname $PREFIX)"
+	ln -sf "$PREFIX" "$SYS_DIR"/"$(dirname $PREFIX)"
+
+}
+
 toolchain_sys() {
 	#local TOOLCHAIN="${IPHONEDEV_DIR}/toolchain"
 	local IPHONE_SDK="${SDKS_DIR}/iPhoneOS${TOOLCHAIN_VERSION}.sdk"
@@ -1404,7 +1463,15 @@ case $1 in
 		message_action "Building the sys Headers and Libraries..."
 	        [ -d "${SYS_DIR}" ] && rm -Rf "${SYS_DIR}"
 		toolchain_sys
-		message_action "SYS folder built!"
+		message_action "sys folder built!"
+		;;
+	
+	buildsys43)
+		check_environment
+		message_action "Building the sys43 Headers and Libraries..."
+	        [ -d "${TOOLCHAIN}/sys43" ] && rm -Rf "${TOOLCHAIN}/sys43"
+		toolchain_sys43
+		message_action "sys43 folder built!"
 		;;
 	
 	build|rebuild)
@@ -1541,6 +1608,9 @@ case $1 in
 		echo
 		echo	"    ${BOLD}buildsys${ENDF}"
 		echo -e "    \tAcquire and build the sys Headers & Libraries."
+		echo
+		echo	"    ${BOLD}buildsys43${ENDF}"
+		echo -e "    \tAcquire and build the sys43 Headers & Libraries."
 		echo
 		echo	"    ${BOLD}cctools${ENDF}"
 		echo -e "    \tAcquire and build cctools."
