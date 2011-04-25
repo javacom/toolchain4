@@ -340,7 +340,7 @@ build_tools() {
 
 		if ! make install; then
 			error "Failed to make dmg2img-1.6.2"
-			error "Make sure you have libbz2 and libssl available on your system."
+			error "Make sure you have libbz2-dev and libssl-dev available on your system."
 			exit 1
 		fi
 
@@ -831,7 +831,8 @@ toolchain_llvmgcc() {
 
 toolchain_build_sys3() {
 	#local TOOLCHAIN="${IPHONEDEV_DIR}/toolchain"
-	local SYS_DIR="${TOOLCHAIN}/sys${TOOLCHAIN_VERSION}"
+	local TOOLCHAIN_VERSION=3.1.3
+        local SYS_DIR="${TOOLCHAIN}/sys313"
 	local LEOPARD_SDK="${SDKS_DIR}/${MACOSX}.sdk"
 	local LEOPARD_SDK_INC="${LEOPARD_SDK}/usr/include"
 	local LEOPARD_SDK_LIBS="${LEOPARD_SDK}/System/Library/Frameworks"
@@ -895,39 +896,6 @@ toolchain_build_sys3() {
 		chmod -R 755 *
 	fi
 
-	mkdir -p "${SYS_DIR}"
-	cd "${SYS_DIR}"
-
-	if [ ! -d "${FW_DIR}/firmware${TOOLCHAIN_VERSION}" ] ; then
-	  if [ ! -f "${FW_DIR}/firmware${TOOLCHAIN_VERSION}.tgz" ] ; then
-		error "I couldn't find an iPhone filesystem at: ${FW_DIR}/firmware${TOOLCHAIN_VERSION}.tgz"
-		exit 1
-	  else
-		mkdir -p "${FW_DIR}/firmware${TOOLCHAIN_VERSION}"; cd "${FW_DIR}/firmware${TOOLCHAIN_VERSION}"; tar xzvf ../"firmware${TOOLCHAIN_VERSION}.tgz"
-	  fi
-	fi
-
-	#mount_img "${FW_DIR}/current" "${MNT_DIR}"
-	local MNT_FW_DIR="${FW_DIR}/firmware${TOOLCHAIN_VERSION}"
-
-	cp_fw=1
-	if [ -d $SYS_DIR ] && [[ `ls -A $SYS_DIR | wc -w` > 0 ]]; then
-		echo "It looks like the iPhone filesystem has already been copied."
-		if ! confirm -N "Copy again?"; then
-			cp_fw=0
-		fi
-	fi
-
-	if [ "x$cp_fw" == "x1" ]; then
-		message_status "Copying required iPhone filesystem components..."
-        	mkdir -p "$SYS_DIR/System/Library"
-		cp -R -p ${MNT_FW_DIR}/usr "$SYS_DIR"
-		cp -R -p ${MNT_FW_DIR}/System/Library/Frameworks "$SYS_DIR/System/Library"
-		cp -R -p ${MNT_FW_DIR}/System/Library/PrivateFrameworks "$SYS_DIR/System/Library"
-	fi
-
-	#umount_img "${FW_DIR}/current"
-
 	# Presently working here and below
 	copy_headers=1
 	if [ -d "${SYS_DIR}/usr/include" ] ; then
@@ -937,9 +905,18 @@ toolchain_build_sys3() {
 	fi
 
 	if [ "x$copy_headers" == "x1" ]; then
+  
+	rm -fr "${SYS_DIR}"
+	mkdir -p "${SYS_DIR}"
+
 	message_status "Copying SDK headers..."
+	echo "iPhoneSDK"
+        mkdir -p "${SYS_DIR}/System/Library"
+	cp -R -p ${IPHONE_SDK}/usr "$SYS_DIR"
+	cp -R -p ${IPHONE_SDK}/System/Library/Frameworks "$SYS_DIR/System/Library"
+	cp -R -p ${IPHONE_SDK}/System/Library/PrivateFrameworks "$SYS_DIR/System/Library"
 	echo "Leopard"
-	mkdir -p "$SYS_DIR/usr/lib"
+	mkdir -p "${SYS_DIR}/usr/lib"
 	cp -R -p "${LEOPARD_SDK_INC}" ${SYS_DIR}/usr/
 	cd ${SYS_DIR}/usr/include
 	ln -sf . System
@@ -1128,13 +1105,13 @@ toolchain_build_sys3() {
 	# Changed some of the below commands from sudo; don't know why they were like that
 	csu=1
 	if [ -d "${CSU_DIR}" ] ; then
-		if ! confirm -N "Checking out iphone-dev again?"; then
+		if ! confirm -N "Checking out csu again?"; then
 			csu=0
 		fi
 	fi
 
 	if [ "x$csu" == "x1" ]; then
-	message_status "Checking out iphone-dev repo..."
+	message_status "Checking out csu from iphone-dev repo..."
 	mkdir -p "${CSU_DIR}"
 	cd "${CSU_DIR}"
 
@@ -1166,6 +1143,7 @@ toolchain_build_sys3() {
 #pushd sdks/iPhoneOS4.2.sdk/usr/lib
 #cp libSystem* "${SYS_DIR}/usr/lib"
 #cp libobjc* "${SYS_DIR}/usr/lib"
+
 }
 
 
@@ -1452,10 +1430,9 @@ case $1 in
 
 	build313)
 		check_environment
-		message_action "Building the sys3.1.3 Headers and Libraries..."
-		TOOLCHAIN_VERSION=3.1.3
+		message_action "Building the sys313 Headers and Libraries..."
 		toolchain_build_sys3
-		message_action "sys3.1.3 folder built!"
+		message_action "sys313 folder built!"
 		;;
 	
 	buildsys)
@@ -1486,7 +1463,30 @@ case $1 in
 		toolchain_sys
 		message_action "It seems like the toolchain built!"
 		;;
-	
+
+
+	dmg2img)
+		check_environment
+		message_action "Preparing to make dmg2img..."
+		download_dmg2img=1
+		if [ -d dmg2img-1.6.2 ] ; then
+		  if ! confirm -N "Download dmg2img again?"; then
+		        download_dmg2img=0
+		  fi
+		fi
+	        if [ "x$download_dmg2img" == "x1" ]; then
+		  wget -O - http://vu1tur.eu.org/tools/download.pl?dmg2img-1.6.2.tar.gz | tar xzf - 
+		fi
+		cd  dmg2img-1.6.2
+
+		if ! (make && sudo make install); then
+			error "Failed to make dmg2img-1.6.2"
+			error "Make sure you have libbz2 and libssl available on your system."
+			exit 1
+		fi
+		message_action "dmg2img built."
+		;;
+
 	xar)
 		check_environment
 		message_action "Preparing to make xar..."
@@ -1510,7 +1510,7 @@ case $1 in
 		fi
 		cd xar-1.5.2
 		if ! (./configure) ; then
-			error "Failed to configre xar-1.5.2, you need to install libxml2-dev"
+			error "Failed to configure xar-1.5.2, you need to install libxml2-dev"
 			exit 1
                 fi
 
@@ -1520,6 +1520,7 @@ case $1 in
 		fi
 		message_action "xar built."
 		;;
+
 	ldid)
 		check_environment
 		message_action "Preparing to make ldid..."
