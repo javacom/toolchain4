@@ -831,8 +831,10 @@ toolchain_llvmgcc() {
 
 toolchain_build_sys3() {
 	#local TOOLCHAIN="${IPHONEDEV_DIR}/toolchain"
-	local TOOLCHAIN_VERSION=3.1.3
-        local SYS_DIR="${TOOLCHAIN}/sys313"
+	#local TOOLCHAIN_VERSION=3.1.3
+        #local SYS_DIR="${TOOLCHAIN}/sys313"
+        #local PKGNAME="iPhoneSDKHeadersAndLibs.pkg"
+
 	local LEOPARD_SDK="${SDKS_DIR}/${MACOSX}.sdk"
 	local LEOPARD_SDK_INC="${LEOPARD_SDK}/usr/include"
 	local LEOPARD_SDK_LIBS="${LEOPARD_SDK}/System/Library/Frameworks"
@@ -858,11 +860,11 @@ toolchain_build_sys3() {
 	  fi
 	fi
 	if [ ! -d "${IPHONE_SDK}" ] ; then
-	  if [ ! -f "${SDKS_DIR}/iPhoneSDKHeadersAndLibs.pkg" ] ; then
-		error "I couldn't find iPhoneSDKHeadersAndLibs.pkg at: ${SDKS_DIR}"
+	  if [ ! -f "${SDKS_DIR}/${PKGNAME}" ] ; then
+		error "I couldn't find ${PKGNAME} at: ${SDKS_DIR}"
 		exit 1
 	  else
-		cd "${SDKS_DIR}"; rm -f Payload; xar -xf iPhoneSDKHeadersAndLibs.pkg Payload; cat Payload | zcat | cpio -id
+		cd "${SDKS_DIR}"; rm -f Payload; xar -xf ${PKGNAME} Payload; cat Payload | zcat | cpio -id
 		# zcat on OSX needs .Z suffix
 		cd "${SDKS_DIR}"; mv "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS${TOOLCHAIN_VERSION}.sdk" .; rm -fr Payload Platforms Examples Documentation
 	  fi
@@ -1428,9 +1430,22 @@ case $1 in
 		message_action "llvmgcc build."
 		;;
 
+	build32)
+		check_environment
+		message_action "Building the sys32 Headers and Libraries..."
+		TOOLCHAIN_VERSION=3.2
+        	SYS_DIR="${TOOLCHAIN}/sys32"
+        	PKGNAME="iPhoneSDKHeadersAndLibs_32.pkg"
+		toolchain_build_sys3
+		message_action "sys32 folder built!"
+		;;
+	
 	build313)
 		check_environment
 		message_action "Building the sys313 Headers and Libraries..."
+		TOOLCHAIN_VERSION=3.1.3
+        	SYS_DIR="${TOOLCHAIN}/sys313"
+        	PKGNAME="iPhoneSDKHeadersAndLibs.pkg"
 		toolchain_build_sys3
 		message_action "sys313 folder built!"
 		;;

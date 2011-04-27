@@ -18,10 +18,20 @@
     sudo apt-get install libxml2-dev
     ./toolchain.sh xar
     then put iPhoneSDK4_2.pkg to /toolchain4/sdks/
+    ./toolchain.sh buildsys
+    to build sys
 
     Put iPhoneSDK4_3.pkg to /toolchain4/sdks/
-    Use ./toolchain.sh buildsys43
-    to build sys43
+    ./toolchain.sh buildsys43
+    to build sys43 folder
+
+    Put iPhoneSDKHeadersAndLibs.pkg to /toolchain4/sdks/
+    ./toolchain.sh buildsys313
+    to build sys313 folder
+
+    Put iPhoneSDKHeadersAndLibs_32.pkg to /toolchain4/sdks/
+    ./toolchain.sh buildsys32
+    to build sys32 folder
 
 5.  Build headers tools and gcc 
     cd /toolchain4
