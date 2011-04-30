@@ -1,10 +1,11 @@
 1.  Ubuntu 10.10 iPhone Toolchain 4
+    If you use Ubuntu 11.04, please see wiki on how to use gcc-4.4 to compile
 
 2.  Install the following packages in Ubuntu
 
     sudo apt-get update
     sudo apt-get install bison flex build-essential wget patch
-    sudo apt-get install git autoconf gawk libssl-dev uuid-dev
+    sudo apt-get install git autoconf gawk libssl-dev libxml2-dev uuid-dev
     sudo apt-get install clang
 
 3.  Clone Project
@@ -26,11 +27,11 @@
     to build sys43 folder
 
     Put iPhoneSDKHeadersAndLibs.pkg to /toolchain4/sdks/
-    ./toolchain.sh buildsys313
+    ./toolchain.sh build313
     to build sys313 folder
 
     Put iPhoneSDKHeadersAndLibs_32.pkg to /toolchain4/sdks/
-    ./toolchain.sh buildsys32
+    ./toolchain.sh build32
     to build sys32 folder
 
 5.  Build headers tools and gcc 
@@ -47,6 +48,9 @@
     sudo mv as i686-linux-gnu-as
     sudo cp -p /toolchain4/as_driver/as_driver as
     sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-as .
+    sudo mv ld i686-linux-gnu-ld
+    sudo cp -p /toolchain4/as_driver/as_driver ld
+    sudo ln -s /toolchain4/pre/bin/arm-apple-darwin9-ld .
 
 7.  Test iOS4 sample code
     cd /toolchain4/Projects/LocalPush
@@ -55,9 +59,12 @@
     (LocalPush.app & LocalPush.ipa will be in build/4.0/ folder)
 
 8.  Checkout the updated UICatalog in svn here
+    sudo apt-get install subversion
+    cd /toolchain4/Projects
     svn checkout http://apiexplorer.googlecode.com/svn/trunk/UICatalog UICatalog-read-only
     cd UICatalog-read-only 
     make -f Makefile.ios4 
     make -f Makefile.ios4 dist
     (Then install the build/4.0/UICatalog.ipa to iPhone for testing)
 
+Enjoy.
