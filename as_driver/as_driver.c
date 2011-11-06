@@ -10,6 +10,8 @@ struct S_prg {
 
 struct S_prg asTab[] = {
 	"i686", "/usr/bin/i686-linux-gnu-as",
+	"armv6", "/usr/bin/arm-apple-darwin9-as",
+	"armv7", "/usr/bin/arm-apple-darwin9-as",
 	"arm", "/usr/bin/arm-apple-darwin9-as",
 	NULL
 };
@@ -17,6 +19,8 @@ struct S_prg asTab[] = {
 struct S_prg ldTab[] = {
 	"i686", "/usr/bin/i686-linux-gnu-ld",
 	"arm", "/usr/bin/arm-apple-darwin9-ld",
+	"armv6", "/usr/bin/arm-apple-darwin9-ld",
+	"armv7", "/usr/bin/arm-apple-darwin9-ld",
 	NULL
 };
 

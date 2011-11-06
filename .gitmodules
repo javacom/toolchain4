@@ -1,0 +1,6 @@
+[submodule "theos"]
+	path = theos
+	url = git://github.com/DHowett/theos.git
+[submodule "Projects/preferenceloader"]
+	path = Projects/preferenceloader
+	url = git://github.com/DHowett/preferenceloader.git

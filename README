@@ -22,6 +22,10 @@
     ./toolchain.sh buildsys
     to build sys
 
+    Put iPhoneSDK5_0.pkg to /toolchain4/sdks/
+    ./toolchain.sh buildsys50
+    to build sys50 folder
+
     Put iPhoneSDK4_3.pkg to /toolchain4/sdks/
     ./toolchain.sh buildsys43
     to build sys43 folder
@@ -66,5 +70,36 @@
     make -f Makefile.ios4 
     make -f Makefile.ios4 dist
     (Then install the build/4.0/UICatalog.ipa to iPhone for testing)
+
+Enjoy.
+
+----------------------------------------------------
+Instructions to add theos build system to toolchain4
+----------------------------------------------------
+1.  Installation
+    cd /toolchain4
+    git submodule add git://github.com/DHowett/theos.git theos
+    mv /toolchain4/theos/include /toolchain4/theos/include.bak
+    git submodule add git://github.com/DHowett/theos-nic-templates.git theos/templates/theos-nic-templates
+    git submodule add git://github.com/rpetrich/iphoneheaders.git theos/include
+    for FILE in /toolchain4/theos/include.bak/*.h; do mv $FILE /toolchain4/theos/include/; done
+    rmdir /toolchain4/theos/include.bak
+    cp /toolchain4/Projects/IOSurfaceAPI.h /toolchain4/theos/include/IOSurface/.
+    cp /toolchain4/pre/bin/ldid /toolchain4/theos/bin/.
+
+2.  This is how to create theos project
+    cd /toolchain4/Projects
+    /toolchain4/theos/bin/nic.pl
+
+3.  Test iOS5 sample notification center widget (requires sys50)
+    cd /toolchain4/Projects/widgettest/
+    make && make package
+
+4.  Test mobilesubstrate extension (requires sys32)
+    cd /toolchain4
+    git submodule add git://github.com/DHowett/preferenceloader.git Projects/preferenceloader
+    cd /toolchain4/Projects/preferenceloader
+    cp /toolchain4/Projects/Makefile_for_preferenceloader Makefile
+    make && make package
 
 Enjoy.

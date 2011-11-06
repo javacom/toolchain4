@@ -1,0 +1,9 @@
+Package: com.yourcompany.widgettest
+Name: widgettest
+Depends: firmware (>= 5.0), com.saurik.substrate.safemode
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome widget for the notification center!
+Maintainer: javacom
+Author: javacom
+Section: Addons (NotificationCenter)
