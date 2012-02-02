@@ -120,7 +120,7 @@ Instructions to add Telesphoreo to toolchain4
     # build headers for sys42 and sys32, please refer to wiki for downloads
     cd /toolchain4
     ./toolchain.sh buildsys
-    mv /toolchain4/sys/ /toolchain4/sys42/
+    mv /toolchain4/sys /toolchain4/sys42
     ./toolchain.sh build32
     ln -s /toolchain4/sys32 sys
     # update some header files
@@ -139,7 +139,7 @@ Instructions to add Telesphoreo to toolchain4
     export PATH=$PATH:/toolchain4/pre/bin
     export PKG_ARCH=iphoneos-arm; ./package.sh p7zip
 
-3.  Test build odcctools
+3.  Test build odcctools-782
     cd /toolchain4/telesphoreo/data
     svn co http://svn.telesphoreo.org/trunk/data/openssl
     svn co http://svn.telesphoreo.org/trunk/data/uuid
