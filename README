@@ -111,14 +111,13 @@ Instructions to add Telesphoreo to toolchain4
 ----------------------------------------------------
 1.  Introduction
     Telesphoreo is an APT-based distribution of Unix Software for iOS started by Jay Freeman (saurik).  For details, please refer to http://www.telephoreo.org/
-stallation
 
 2.  Installation
     # update the toolchain4 git project 
     # install additional required packages
     sudo apt-get install pkg-config realpath texinfo
     sudo apt-get install subversion
-    # build headers for sys42 and sys32
+    # build headers for sys42 and sys32, please refer to wiki for downloads
     cd /toolchain4
     ./toolchain.sh buildsys
     mv /toolchain4/sys/ /toolchain4/sys42/
