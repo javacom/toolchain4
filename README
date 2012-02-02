@@ -103,3 +103,49 @@ Instructions to add theos build system to toolchain4
     make && make package
 
 Enjoy.
+
+
+
+----------------------------------------------------
+Instructions to add Telesphoreo to toolchain4
+----------------------------------------------------
+1.  Introduction
+    Telesphoreo is an APT-based distribution of Unix Software for iOS started by Jay Freeman (saurik).  For details, please refer to http://www.telephoreo.org/
+stallation
+
+2.  Installation
+    # update the toolchain4 git project 
+    # install additional required packages
+    sudo apt-get install pkg-config realpath texinfo
+    sudo apt-get install subversion
+    # build headers for sys42 and sys32
+    cd /toolchain4
+    ./toolchain.sh buildsys
+    mv /toolchain4/sys/ /toolchain4/sys42/
+    ./toolchain.sh build32
+    ln -s /toolchain4/sys32 sys
+    # update some header files
+    cp /toolchain4/sys42/usr/include/mach/mach_interface.h /toolchain4/sys32/usr/include/mach/.
+    cp /toolchain4/sys42/usr/include/mach/mach_host.h /toolchain4/sys32/usr/include/mach/.
+    cp /toolchain4/sys42/usr/include/mach/mach_vm.h /toolchain4/sys32/usr/include/mach/.
+    cp /toolchain4/sys42/usr/include/mach/mach_init.h /toolchain4/sys32/usr/include/mach/.
+    cp /toolchain4/sys42/usr/include/mach/host_info.h /toolchain4/sys32/usr/include/mach/.
+    mkdir -p /toolchain4/telesphoreo/debs
+    mkdir -p /toolchain4/telesphoreo/data
+
+2.  Test build p7zip
+    cd /toolchain4/telesphoreo/data
+    svn co http://svn.telesphoreo.org/trunk/data/p7zip
+    cd /toolchain4/telesphoreo
+    export PATH=$PATH:/toolchain4/pre/bin
+    export PKG_ARCH=iphoneos-arm; ./package.sh p7zip
+
+3.  Test build odcctools
+    cd /toolchain4/telesphoreo/data
+    svn co http://svn.telesphoreo.org/trunk/data/openssl
+    svn co http://svn.telesphoreo.org/trunk/data/uuid
+    cd /toolchain4/telesphoreo
+    export PKG_ARCH=iphoneos-arm; ./package.sh odcctools
+
+Enjoy.
+
