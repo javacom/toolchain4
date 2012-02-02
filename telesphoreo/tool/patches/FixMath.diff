@@ -1,0 +1,11 @@
+--- /usr/include/CarbonCore/FixMath.h	2008-02-19 12:14:55.000000000 +0000
++++ /usr/include/CarbonCore/FixMath.h	2008-03-27 09:50:49.000000000 +0000
+@@ -90,7 +90,7 @@
+ 
+ #else
+ 
+-    #error "Unknown architecture."
++    //#error "Unknown architecture."
+     // To use unoptimized standard C code, remove above line.
+     #define _IntSaturate(x) ((x) <= -0x1p31f ? (int) -0x80000000 : \
+         0x1p31f <= (x) ? (int) 0x7fffffff : (int) (x))

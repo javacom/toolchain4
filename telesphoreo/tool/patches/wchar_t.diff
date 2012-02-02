@@ -1,0 +1,28 @@
+diff --git /usr/include/c++/4.0.0/arm-apple-darwin8/bits/c++config.h /usr/include/c++/4.0.0/arm-apple-darwin8/bits/c++config.h
+index b570daa..3309946 100644
+--- /usr/include/c++/4.0.0/arm-apple-darwin8/bits/c++config.h
++++ /usr/include/c++/4.0.0/arm-apple-darwin8/bits/c++config.h
+@@ -127,7 +127,7 @@ namespace std
+ #define _GLIBCXX_USE_C99_COMPLEX 1
+ 
+ // Define if code specialized for wchar_t should be used.
+-#define _GLIBCXX_USE_WCHAR_T 1
++/* #undef _GLIBCXX_USE_WCHAR_T */
+ 
+ // Define if using setrlimit to set resource limits during 'make check'.
+ #define _GLIBCXX_RES_LIMITS 1
+diff --git /usr/include/c++/4.0.0/bits/stringfwd.h /usr/include/c++/4.0.0/bits/stringfwd.h
+index 99d3ce3..cc033d6 100644
+--- /usr/include/c++/4.0.0/bits/stringfwd.h
++++ /usr/include/c++/4.0.0/bits/stringfwd.h
+@@ -61,9 +61,9 @@ namespace std
+ 
+ #ifdef _GLIBCXX_USE_WCHAR_T
+   template<> struct char_traits<wchar_t>;
++#endif
+ 
+   typedef basic_string<wchar_t> wstring;
+-#endif
+ } // namespace std
+ 
+ #endif	// _STRINGFWD_H

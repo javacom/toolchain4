@@ -1,0 +1,63 @@
+--- /usr/include/CarbonCore/MachineExceptions.h	2006-09-11 23:05:25.000000000 -0500
++++ /usr/include/CarbonCore/MachineExceptions.h	2007-07-23 18:15:13.000000000 -0500
+@@ -277,6 +277,60 @@
+ typedef struct ExceptionInformation     ExceptionInformation;
+ #endif  /* TARGET_CPU_X86 */
+ 
++#if TARGET_CPU_ARM
++
++struct MachineInformationARM {
++    int unused;
++};
++typedef struct MachineInformationARM MachineInformationARM;
++
++struct RegisterInformationARM {
++    unsigned int R0; 
++    unsigned int R1; 
++    unsigned int R2; 
++    unsigned int R3; 
++    unsigned int R4; 
++    unsigned int R5; 
++    unsigned int R6; 
++    unsigned int R7; 
++    unsigned int R8; 
++    unsigned int R9; 
++    unsigned int R10; 
++    unsigned int R11; 
++    unsigned int R12; 
++    unsigned int R13; 
++    unsigned int R14; 
++    unsigned int R15; 
++    unsigned int R16; 
++    unsigned int R17; 
++};
++typedef struct RegisterInformationARM RegisterInformationARM;
++
++struct FPUInformationARM {
++    unsigned int dunno; /* FIXME */
++};
++typedef struct FPUInformationARM FPUInformationARM;
++
++struct VectorInformationARM {
++    unsigned int dunno[8];
++};
++typedef struct VectorInformationARM VectorInformationARM;
++
++typedef MachineInformationARM         MachineInformation;
++typedef RegisterInformationARM        RegisterInformation;
++typedef FPUInformationARM             FPUInformation;
++typedef VectorInformationARM          VectorInformation;
++struct ExceptionInformation {
++  ExceptionKind       theKind;
++  MachineInformation * machineState;
++  RegisterInformation * registerImage;
++  FPUInformation *    FPUImage;
++  ExceptionInfo       info;
++  VectorInformation * vectorImage;
++};
++typedef struct ExceptionInformation     ExceptionInformation;
++#endif
++
+ /* 
+     Note:   An ExceptionHandler is NOT a UniversalProcPtr, except in Carbon.
+             It must be a PowerPC function pointer with NO routine descriptor, 

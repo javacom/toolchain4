@@ -1,0 +1,14 @@
+diff --git /usr/include/Foundation/NSFileManager.h /usr/include/Foundation/NSFileManager.h
+index a394b96..216a43f 100644
+--- /usr/include/Foundation/NSFileManager.h
++++ /usr/include/Foundation/NSFileManager.h
+@@ -97,8 +97,8 @@
+ - (BOOL)linkPath:(NSString *)src toPath:(NSString *)dest handler:(id)handler;
+ - (BOOL)copyPath:(NSString *)src toPath:(NSString *)dest handler:(id)handler;
+ - (BOOL)movePath:(NSString *)src toPath:(NSString *)dest handler:(id)handler;	
+-- (BOOL)removeFileAtPath:(NSString *)path handler:(id)handler;
+ #endif
++- (BOOL)removeFileAtPath:(NSString *)path handler:(id)handler;
+ 
+ /* Process working directory management. Despite the fact that these are instance methods on NSFileManager, these methods report and change (respectively) the working directory for the entire process. Developers are cautioned that doing so is fraught with peril.
+  */

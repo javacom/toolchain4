@@ -1,0 +1,32 @@
+diff --git /usr/include/mach/arm/_structs.h /usr/include/mach/arm/_structs.h
+index e130afa..1f98c98 100644
+--- /usr/include/mach/arm/_structs.h
++++ /usr/include/mach/arm/_structs.h
+@@ -25,7 +25,7 @@ _STRUCT_ARM_EXCEPTION_STATE
+ };
+ #endif /* __DARWIN_UNIX03 */
+
+-#if __DARWIN_UNIX03
++#if __DARWIN_UNIX03 || 1
+ #define _STRUCT_ARM_THREAD_STATE	struct __darwin_arm_thread_state
+ _STRUCT_ARM_THREAD_STATE
+ {
+diff --git /usr/include/arm/_structs.h /usr/include/arm/_structs.h
+index 2834b48..6c14349 100644
+--- /usr/include/arm/_structs.h
++++ /usr/include/arm/_structs.h
+@@ -38,6 +38,14 @@ _STRUCT_MCONTEXT
+ #endif /* _STRUCT_MCONTEXT */
+ #endif /* __need_struct_mcontext */
+ 
++#ifdef __need_mcontext_t
++#undef __need_mcontext_t
++#ifndef _MCONTEXT_T
++#define _MCONTEXT_T
++typedef _STRUCT_MCONTEXT	*mcontext_t;
++#endif /* _MCONTEXT_T */
++#endif /* __need_mcontext_t */
++
+ #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+ #ifndef ARM_MCONTEXT_SIZE
+ #define ARM_MCONTEXT_SIZE       (ARM_THREAD_STATE_COUNT + ARM_VFP_STATE_COUNT + ARM_EXCEPTION_STATE_COUNT) * sizeof(int)

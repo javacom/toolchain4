@@ -1,0 +1,13 @@
+diff --git /usr/include/Availability.h /usr/include/Availability.h
+index 1c3e1cf..cb81edb 100644
+--- /usr/include/Availability.h
++++ /usr/include/Availability.h
+@@ -98,6 +98,8 @@
+ #define __MAC_10_6      1060
+ #define __MAC_NA        9999   /* not available */
+ 
++#define __IPHONE_1_0     10000  
++#define __IPHONE_1_2     10200  
+ #define __IPHONE_2_0     20000  
+ #define __IPHONE_NA      99999  /* not available */
+ 

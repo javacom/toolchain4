@@ -1,0 +1,11 @@
+--- /usr/include/machine/locks.h	2008-04-18 07:47:44.000000000 +0000
++++ /usr/include/machine/locks.h	2008-04-18 07:46:43.000000000 +0000
+@@ -27,6 +27,8 @@
+ #include "ppc/locks.h"
+ #elif defined (__i386__)
+ #include "i386/locks.h"
++#elif defined (__arm__)
++#include "arm/locks.h"
+ #else
+ #error architecture not supported
+ #endif

@@ -1,0 +1,11 @@
+--- /usr/include/CoreFoundation/CoreFoundation.h	2008-02-27 06:36:09.000000000 +0000
++++ /usr/include/CoreFoundation/CoreFoundation.h	2008-03-29 18:47:27.000000000 +0000
+@@ -78,7 +78,7 @@
+ #include <CoreFoundation/CFMachPort.h>
+ #include <CoreFoundation/CFUserNotification.h>
+ #endif
+-#if (TARGET_OS_MAC && !TARGET_OS_EMBEDDED)
++#if (TARGET_OS_MAC && !TARGET_OS_EMBEDDED) || TARGET_OS_EMBEDDED
+ #include <CoreFoundation/CFXMLNode.h>
+ #include <CoreFoundation/CFXMLParser.h>
+ #ifndef CF_OPEN_SOURCE

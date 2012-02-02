@@ -1,0 +1,12 @@
+diff -ru /apl/inc/Foundation/NSAffineTransform.h /apl/32/Foundation/NSAffineTransform.h
+--- /apl/inc/Foundation/NSAffineTransform.h	2008-02-19 13:11:39.000000000 +0000
++++ /apl/32/Foundation/NSAffineTransform.h	2008-04-20 02:53:18.000000000 +0000
+@@ -4,7 +4,7 @@
+ 
+ #import <Foundation/NSObject.h>
+ #import <Foundation/NSGeometry.h>
+-#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGAffineTransform.h>
++#import <CoreGraphics/CGAffineTransform.h>
+ 
+ typedef struct {
+     CGFloat m11, m12, m21, m22;

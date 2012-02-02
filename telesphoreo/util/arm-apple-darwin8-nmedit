@@ -1,0 +1,30 @@
+#!/bin/bash
+base=$(basename "$0")
+if [[ $0 == */* ]]; then
+    self=${0}
+else
+    self=$(which "$0")
+fi
+self=$(realpath "${self}")
+which -a "${base}" | while read -r fake; do
+    real=$(realpath "${fake}")
+    if [[ ${real} != ${self} ]]; then
+        "${real}" "$@"
+        break
+    fi
+done
+declare -a file
+while [[ $# -ne 0 ]]; do
+    case "$1" in
+        (-s) shift;;
+        (-o) outp=$2; break;;
+        (*) file[${#file[@]}]=$1;;
+    esac; shift
+done
+if [[ -n "${outp}" ]]; then
+    ldid -T- "${outp}"
+else
+    for mach in "${file[@]}"; do
+        ldid -T- "${mach}"
+    done
+fi

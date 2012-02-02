@@ -1,0 +1,14 @@
+diff --git /usr/include/sys/cdefs.h /usr/include/sys/cdefs.h
+index 64e4e8b..0f43f4c 100644
+--- /usr/include/sys/cdefs.h
++++ /usr/include/sys/cdefs.h
+@@ -253,7 +253,9 @@
+ 
+ /* These settings are particular to each product. */
+ /* Product: iPhone */
++#if __ENVIRONMENT_ASPEN_VERSION_MIN_REQUIRED__-0 >= 20000
+ #define __DARWIN_ONLY_64_BIT_INO_T	1
++#endif
+ #define __DARWIN_ONLY_UNIX_CONFORMANCE	1
+ #define __DARWIN_ONLY_VERS_1050		1
+ 

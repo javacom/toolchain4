@@ -1,0 +1,17 @@
+diff --git /usr/include/WebCore/EventTargetNode.h /usr/include/WebCore/EventTargetNode.h
+index f44e158..728b6d3 100644
+--- /usr/include/WebCore/EventTargetNode.h
++++ /usr/include/WebCore/EventTargetNode.h
+@@ -102,9 +102,9 @@ protected:
+     friend class EventTarget;
+     RegisteredEventListenerList* m_regdListeners;
+ 
+-    HashMap<Node *, int> * EventTargetNode::WebThreadGetCurrentDOMMouseWheelEventListeners();
+-    HashMap<Node *, int> * EventTargetNode::WebThreadGetCurrentDOMMouseMoveEventListeners();
+-    HashMap<Node *, int> * EventTargetNode::WebThreadGetCurrentDOMMouseClickEventListeners();
++    HashMap<Node *, int> * WebThreadGetCurrentDOMMouseWheelEventListeners();
++    HashMap<Node *, int> * WebThreadGetCurrentDOMMouseMoveEventListeners();
++    HashMap<Node *, int> * WebThreadGetCurrentDOMMouseClickEventListeners();
+ 
+ private:
+     virtual void refEventTarget() { ref(); }

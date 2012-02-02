@@ -1,0 +1,11 @@
+--- m4/libtool.m4	2005-07-29 13:31:15.000000000 +0000
++++ m4/libtool.m4_	2008-03-28 15:05:28.000000000 +0000
+@@ -1267,7 +1267,7 @@
+   shrext_cmds='$(test .$module = .yes && echo .so || echo .dylib)'
+   # Apple's gcc prints 'gcc -print-search-dirs' doesn't operate the same.
+   if test "$GCC" = yes; then
+-    sys_lib_search_path_spec=`$CC -print-search-dirs | tr "\n" "$PATH_SEPARATOR" | sed -e 's/libraries:/@libraries:/' | tr "@" "\n" | grep "^libraries:" | sed -e "s/^libraries://" -e "s,=/,/,g" -e "s,$PATH_SEPARATOR, ,g" -e "s,.*,& /lib /usr/lib /usr/local/lib,g"`
++    sys_lib_search_path_spec=`$CC -print-search-dirs | tr "\n" "$PATH_SEPARATOR" | sed -e 's/libraries:/@libraries:/' | tr "@" "\n" | grep "^libraries:" | sed -e "s/^libraries://" -e "s,=/,/,g" -e "s,$PATH_SEPARATOR, ,g"`
+   else
+     sys_lib_search_path_spec='/lib /usr/lib /usr/local/lib'
+   fi

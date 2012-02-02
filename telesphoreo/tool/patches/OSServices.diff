@@ -1,0 +1,20 @@
+diff --git /usr/include/OSServices/OSServices.h /usr/include/OSServices/OSServices.h
+index f14355d..c3295cf 100644
+--- /usr/include/OSServices/OSServices.h
++++ /usr/include/OSServices/OSServices.h
+@@ -53,6 +53,7 @@
+ #include <OSServices/WSTypes.h>
+ #endif
+ 
++#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+ #ifndef __WSMETHODINVOCATION__
+ #include <OSServices/WSMethodInvocation.h>
+ #endif
+@@ -60,6 +61,7 @@
+ #ifndef __WSPROTOCOLHANDLER__
+ #include <OSServices/WSProtocolHandler.h>
+ #endif
++#endif
+ 
+ 
+ #if !__LP64__

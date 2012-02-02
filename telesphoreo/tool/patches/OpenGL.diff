@@ -1,0 +1,107 @@
+diff --git /usr/include/AppKit/NSOpenGL.h /usr/include/AppKit/NSOpenGL.h
+index 5a8eaf4..e3ccb99 100644
+--- /usr/include/AppKit/NSOpenGL.h
++++ /usr/include/AppKit/NSOpenGL.h
+@@ -6,7 +6,12 @@
+ */
+ 
+ #import <Foundation/NSObject.h>
++
++#ifdef __arm__
++#import <OpenGLES/ES1/gl.h>
++#else
+ #import <OpenGL/gl.h>
++#endif
+ 
+ @class NSData, NSView, NSScreen;
+ 
+diff --git /usr/include/CoreVideo/CVDisplayLink.h /usr/include/CoreVideo/CVDisplayLink.h
+index d08c03a..56a8b08 100644
+--- /usr/include/CoreVideo/CVDisplayLink.h
++++ /usr/include/CoreVideo/CVDisplayLink.h
+@@ -24,7 +24,12 @@ typedef struct __CVDisplayLink *CVDisplayLinkRef;
+ #include <ApplicationServices/ApplicationServices.h>
+ #include <CoreVideo/CVReturn.h>
+ #include <CoreVideo/CVBase.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#else
+ #include <OpenGL/OpenGL.h>
++#endif
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+diff --git /usr/include/CoreVideo/CVOpenGLBuffer.h /usr/include/CoreVideo/CVOpenGLBuffer.h
+index d64a896..732637f 100644
+--- /usr/include/CoreVideo/CVOpenGLBuffer.h
++++ /usr/include/CoreVideo/CVOpenGLBuffer.h
+@@ -17,8 +17,14 @@
+ #define __COREVIDEO_CVOPENGLBUFFER_H__ 1
+ 
+ #include <CoreVideo/CVImageBuffer.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#include <OpenGLES/ES1/gl.h>
++#else
+ #include <OpenGL/OpenGL.h>
+ #include <OpenGL/gl.h>
++#endif
+ 
+ 
+ #if defined(__cplusplus)
+diff --git /usr/include/CoreVideo/CVOpenGLTexture.h /usr/include/CoreVideo/CVOpenGLTexture.h
+index 352096e..04d2a62 100644
+--- /usr/include/CoreVideo/CVOpenGLTexture.h
++++ /usr/include/CoreVideo/CVOpenGLTexture.h
+@@ -20,8 +20,15 @@
+ #include <CoreVideo/CVReturn.h>
+ #include <CoreVideo/CVImageBuffer.h>
+ #include <ApplicationServices/ApplicationServices.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#include <OpenGLES/ES1/gl.h>
++#else
+ #include <OpenGL/OpenGL.h>
+ #include <OpenGL/gl.h>
++#endif
++
+ #include <stddef.h>
+ #include <stdint.h>
+ 
+diff --git /usr/include/CoreVideo/CVOpenGLTextureCache.h /usr/include/CoreVideo/CVOpenGLTextureCache.h
+index bb3000e..8b4628b 100644
+--- /usr/include/CoreVideo/CVOpenGLTextureCache.h
++++ /usr/include/CoreVideo/CVOpenGLTextureCache.h
+@@ -13,7 +13,12 @@
+ #include <CoreVideo/CVReturn.h>
+ #include <CoreVideo/CVBuffer.h>
+ #include <CoreVideo/CVOpenGLTexture.h>
++
++#ifdef __arm__
++#include <OpenGLES/EAGL.h>
++#else
+ #include <OpenGL/OpenGL.h>
++#endif
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+diff --git /usr/include/QuartzCore/CAOpenGLLayer.h /usr/include/QuartzCore/CAOpenGLLayer.h
+index 0991768..fd6543c 100644
+--- /usr/include/QuartzCore/CAOpenGLLayer.h
++++ /usr/include/QuartzCore/CAOpenGLLayer.h
+@@ -5,7 +5,12 @@
+ 
+ #import <QuartzCore/CALayer.h>
+ #import <QuartzCore/CVBase.h>
++
++#ifdef __arm__
++#import <OpenGLES/EAGL.h>
++#else
+ #import <OpenGL/OpenGL.h>
++#endif
+ 
+ @interface CAOpenGLLayer : CALayer
+ {

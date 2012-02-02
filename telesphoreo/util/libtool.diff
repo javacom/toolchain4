@@ -1,0 +1,29 @@
+--- ltmain.sh.orig	2006-03-11 18:49:04.000000000 +0000
++++ ltmain.sh	2008-01-14 04:23:08.000000000 +0000
+@@ -2213,7 +2213,7 @@
+ 	  deplibs="$deplib $deplibs"
+ 	  continue
+ 	  ;;
+-	*.la) lib="$deplib" ;;
++	*.la) lib="$("${PKG_BASE}/util/find.sh" "$deplib")"; lib="${lib%%:*}" ;;
+ 	*.$libext)
+ 	  if test "$pass" = conv; then
+ 	    deplibs="$deplib $deplibs"
+@@ -2890,7 +2890,7 @@
+ 		if grep "^installed=no" $deplib > /dev/null; then
+ 		  path="$absdir/$objdir"
+ 		else
+-		  eval libdir=`${SED} -n -e 's/^libdir=\(.*\)$/\1/p' $deplib`
++		  eval libdir=`${SED} -n -e 's/^libdir=\(.*\)$/\1/p' "$("${PKG_BASE}/util/find.sh" "$deplib")"`
+ 		  if test -z "$libdir"; then
+ 		    $echo "$modename: \`$deplib' is not a valid libtool archive" 1>&2
+ 		    exit $EXIT_FAILURE
+@@ -5609,7 +5609,7 @@
+ 	      case $deplib in
+ 	      *.la)
+ 		name=`$echo "X$deplib" | $Xsed -e 's%^.*/%%'`
+-		eval libdir=`${SED} -n -e 's/^libdir=\(.*\)$/\1/p' $deplib`
++		eval libdir=`${SED} -n -e 's/^libdir=\(.*\)$/\1/p' "$("${PKG_BASE}/util/find.sh" "$deplib")"`
+ 		if test -z "$libdir"; then
+ 		  $echo "$modename: \`$deplib' is not a valid libtool archive" 1>&2
+ 		  exit $EXIT_FAILURE

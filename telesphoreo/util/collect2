@@ -1,0 +1,66 @@
+#!/bin/bash
+
+unset GCC_EXEC_PREFIX
+unset COMPILER_PATH
+
+unset aspen_version_min
+unset macosx_version_min
+unset o
+
+#export | grep 'GCC\|PATH\|PKG'
+
+function parse() {
+    while [[ $# -ne 0 ]]; do
+        if [[ $1 = -maspen-version-min=* ]]; then
+            maspen_version_min=${1#-maspen-version-min=}
+        elif [[ $1 = -mmacosx-version-min=* ]]; then
+            mmacosx_version_min=${1#-mmacosx-version-min=}
+        elif [[ $1 == -o ]]; then
+            if [[ $2 != *.o ]]; then
+                o=$2
+            fi
+            shift
+        fi; shift
+    done
+}
+
+set -e
+
+eval "parse ${COLLECT_GCC_OPTIONS}"
+
+if [[ "${maspen_version_min+@}" || "${mmacosx_version_min+@}" ]]; then
+    darwin=
+else
+    unset darwin
+fi
+
+declare -a flags
+if [[ "${darwin+@}" ]]; then
+    flags[${#flags[@]}]=-no_uuid
+
+    if [[ "${PKG_PATH+@}" ]]; then
+        flags=("${flags[@]}"$({
+            echo "${PKG_PATH}" | tr ':' $'\n'
+
+            for DEP_NAME in libxml2 sqlite3; do
+                echo "$(PKG_DEST_ "${DEP_NAME}")"
+            done
+        } | while read -r path; do
+            find "${path}" -name '*.dylib' -print0 | while read -r -d $'\0' dylib_file; do
+                dylib_name=${dylib_file#${path}}
+                echo -n " -dylib_file ${dylib_name}:${dylib_file}"
+            done
+
+            echo -n " -dylib_file /usr/lib/libncurses.5.4.dylib:$(PKG_DEST_ ncurses)/usr/lib/libncurses.5.dylib"
+            echo -n " -dylib_file /usr/lib/libssl.0.9.7.dylib:$(PKG_DEST_ openssl)/usr/lib/libssl.0.9.8.dylib"
+            echo -n " -dylib_file /usr/lib/libcrypto.0.9.7.dylib:$(PKG_DEST_ openssl)/usr/lib/libcrypto.0.9.8.dylib"
+        done))
+    fi
+fi
+
+#echo ::: "$("${COLLECT_GCC}" -print-prog-name=collect2)" "$@" "${flags[@]}"
+"$("${COLLECT_GCC}" -print-prog-name=collect2)" "$@" "${flags[@]}"
+
+if [[ "${o+@}" && "${darwin+@}" ]]; then
+    ldid -T- "$o"
+fi

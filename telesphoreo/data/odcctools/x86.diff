@@ -1,0 +1,65 @@
+diff -ru odcctools-253/libstuff/bytesex.c odcctools-253+iPhone/libstuff/bytesex.c
+--- odcctools-253/libstuff/bytesex.c	2008-07-21 18:58:48.000000000 +0000
++++ odcctools-253+iPhone/libstuff/bytesex.c	2008-07-21 19:15:06.000000000 +0000
+@@ -1408,7 +1408,7 @@
+ #endif /* x86_THREAD_STATE64 */
+ 
+ /* current i386 thread states */
+-#if i386_THREAD_STATE == 1
++#if i386_THREAD_STATE == 1 && 0
+ __private_extern__
+ void
+ swap_i386_float_state(
+diff -ru odcctools-253/libstuff/swap_headers.c odcctools-253+iPhone/libstuff/swap_headers.c
+--- odcctools-253/libstuff/swap_headers.c	2008-07-21 18:58:48.000000000 +0000
++++ odcctools-253+iPhone/libstuff/swap_headers.c	2008-07-21 19:07:38.000000000 +0000
+@@ -635,13 +635,13 @@
+ 		   || cputype == CPU_TYPE_X86_64
+ #endif /* x86_THREAD_STATE64 */
+ 		   ){
+-		    i386_thread_state_t *cpu;
++		    x86_thread_state_t *cpu;
+ #ifdef x86_THREAD_STATE64
+ 		    x86_thread_state64_t *cpu64;
+ #endif /* x86_THREAD_STATE64 */
+ /* current i386 thread states */
+ #if i386_THREAD_STATE == 1
+-		    struct i386_float_state *fpu;
++		    struct x86_float_state *fpu;
+ 		    i386_exception_state_t *exc;
+ #endif /* i386_THREAD_STATE == 1 */
+ 
+@@ -679,8 +679,8 @@
+ 				    "LC_THREAD", i);
+ 				return(FALSE);
+ 			    }
+-			    cpu = (i386_thread_state_t *)state;
+-			    state += sizeof(i386_thread_state_t);
++			    cpu = (x86_thread_state_t *)state;
++			    state += sizeof(x86_thread_state_t);
+ 			    break;
+ /* current i386 thread states */
+ #if i386_THREAD_STATE == 1
+@@ -695,8 +695,8 @@
+ 				    "LC_THREAD", i);
+ 				return(FALSE);
+ 			    }
+-			    fpu = (struct i386_float_state *)state;
+-			    state += sizeof(struct i386_float_state);
++			    fpu = (struct x86_float_state *)state;
++			    state += sizeof(struct x86_float_state);
+ 			    break;
+ 			case i386_EXCEPTION_STATE:
+ 			    if(count != I386_EXCEPTION_STATE_COUNT){
+@@ -1350,9 +1350,9 @@
+ /* current i386 thread states */
+ #if i386_THREAD_STATE == 1
+ 			case i386_FLOAT_STATE:
+-			    fpu = (struct i386_float_state *)state;
++			    fpu = (struct x86_float_state *)state;
+ 			    swap_i386_float_state(fpu, target_byte_sex);
+-			    state += sizeof(struct i386_float_state);
++			    state += sizeof(struct x86_float_state);
+ 			    break;
+ 			case i386_EXCEPTION_STATE:
+ 			    exc = (i386_exception_state_t *)state;

@@ -1,0 +1,14 @@
+diff --git /usr/include/QuartzCore/CoreAnimation.h /usr/include/QuartzCore/CoreAnimation.h
+index 6f45332..6a0cf35 100644
+--- /usr/include/QuartzCore/CoreAnimation.h
++++ /usr/include/QuartzCore/CoreAnimation.h
+@@ -16,7 +16,9 @@
+ #import <QuartzCore/CALayer.h>
+ #import <QuartzCore/CAMediaTiming.h>
+ #import <QuartzCore/CAMediaTimingFunction.h>
++#ifndef __arm__
+ #import <QuartzCore/CAOpenGLLayer.h>
++#endif
+ #import <QuartzCore/CARenderer.h>
+ #import <QuartzCore/CAScrollLayer.h>
+ #import <QuartzCore/CATextLayer.h>

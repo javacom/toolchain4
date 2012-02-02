@@ -1,0 +1,102 @@
+diff --git /usr/include/Security/KCExceptions.h /usr/include/Security/KCExceptions.h
+index 3c62f78..e0abd87 100644
+--- /usr/include/Security/KCExceptions.h
++++ /usr/include/Security/KCExceptions.h
+@@ -28,7 +28,7 @@
+ #ifndef _SECURITY_KCEXCEPTIONS_H_
+ #define _SECURITY_KCEXCEPTIONS_H_
+ 
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacErrors.h>
++#include <CarbonCore/MacErrors.h>
+ #include <security_utilities/errors.h>
+ 
+ #ifdef lock
+diff --git /usr/include/Security/KCUtilities.h /usr/include/Security/KCUtilities.h
+index 7658350..137ac00 100644
+--- /usr/include/Security/KCUtilities.h
++++ /usr/include/Security/KCUtilities.h
+@@ -25,7 +25,7 @@
+ #define _SECURITY_KCUTILITIES_H_
+ 
+ #include <security_utilities/errors.h>
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacErrors.h>
++#include <CarbonCore/MacErrors.h>
+ 
+ namespace Security
+ {
+diff --git /usr/include/Security/Keychains.h /usr/include/Security/Keychains.h
+index 90ef927..f6e8e78 100644
+--- /usr/include/Security/Keychains.h
++++ /usr/include/Security/Keychains.h
+@@ -106,7 +106,7 @@ private:
+ 	typedef KeychainSchemaImpl Impl;
+ };
+ 
+-
++class ItemImpl;
+ class KeychainImpl : public SecCFObject, private CssmClient::Db::DefaultCredentialsMaker
+ {
+     NOCOPY(KeychainImpl)
+diff --git /usr/include/Security/cs.h /usr/include/Security/cs.h
+index d7957fc..87e31ca 100644
+--- /usr/include/Security/cs.h
++++ /usr/include/Security/cs.h
+@@ -31,7 +31,7 @@
+ #include <Security/CodeSigning.h>
+ #include <Security/SecCodeSigner.h>
+ #include <Security/SecBasePriv.h>
+-#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacErrors.h>
++#include <CarbonCore/MacErrors.h>
+ #include <security_utilities/globalizer.h>
+ #include <security_utilities/seccfobject.h>
+ #include <security_utilities/cfclass.h>
+diff --git /usr/include/Security/cspclient.h /usr/include/Security/cspclient.h
+index 8aab4b4..2ffe721 100644
+--- /usr/include/Security/cspclient.h
++++ /usr/include/Security/cspclient.h
+@@ -67,8 +67,8 @@ public:
+ 	Context(const CSP &csp, CSSM_ALGORITHMS alg = CSSM_ALGID_NONE);
+ 	~Context();
+ 
+-	CSP Context::attachment() const { return parent<CSP>(); }
+-	Module Context::module() const { return attachment()->module(); }
++	CSP attachment() const { return parent<CSP>(); }
++	Module module() const { return attachment()->module(); }
+ 	
+ 	CSSM_ALGORITHMS algorithm() const { return mAlgorithm; }
+ 	void algorithm(CSSM_ALGORITHMS alg);
+diff --git /usr/include/Security/mach++.h /usr/include/Security/mach++.h
+index 93cae91..e539b83 100644
+--- /usr/include/Security/mach++.h
++++ /usr/include/Security/mach++.h
+@@ -192,7 +192,7 @@ private:
+ 	mutable char nameBuffer[BOOTSTRAP_MAX_NAME_LEN];
+     
+ protected:
+-	char *Bootstrap::makeName(const char *s) const
++	char *makeName(const char *s) const
+ 	{ return strncpy(nameBuffer, s, BOOTSTRAP_MAX_NAME_LEN); }
+ };
+ 
+diff --git /usr/include/Security/objectacl.h /usr/include/Security/objectacl.h
+index 0be1f62..c9ec079 100644
+--- /usr/include/Security/objectacl.h
++++ /usr/include/Security/objectacl.h
+@@ -125,7 +125,7 @@ public:
+         virtual bool validate(const AclValidationContext &ctx) const = 0;
+ 
+ 		template <class Action>
+-		void ObjectAcl::Entry::exportBlob(Action &pub, Action &priv)
++		void exportBlob(Action &pub, Action &priv)
+ 		{
+ 			Endian<uint32> del = delegate; pub(del);	// 4 bytes delegate flag
+ 			exportSubject(subject, pub, priv);	// subject itself (polymorphic)
+@@ -197,7 +197,7 @@ public:
+ 	// These helpers deal with transferring one subject from/to reader/writer streams.
+ 	// You'd usually only call those from complex subject implementations (e.g. threshold)
+ 	template <class Action>
+-	static void ObjectAcl::exportSubject(AclSubject *subject, Action &pub, Action &priv)
++	static void exportSubject(AclSubject *subject, Action &pub, Action &priv)
+ 	{
+ 		Endian<uint32> typeAndVersion = subject->type() | subject->version() << AclSubject::versionShift;
+ 		pub(typeAndVersion);

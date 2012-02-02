@@ -1,0 +1,17 @@
+--- /usr/include/AvailabilityMacros.h	2008-02-27 06:49:24.000000000 +0000
++++ /usr/include/AvailabilityMacros.h	2008-03-28 14:10:13.000000000 +0000
+@@ -84,7 +84,13 @@
+     #ifdef __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
+         #define MAC_OS_X_VERSION_MIN_REQUIRED __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
+     #else
+-        #if __ppc64__ || __i386__ || __x86_64__
++        #ifdef __ENVIRONMENT_ASPEN_VERSION_MIN_REQUIRED__
++            #if __ENVIRONMENT_ASPEN_VERSION_MIN_REQUIRED__ < 10200
++                #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_4
++            #else
++                #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_5
++            #endif
++        #elif __ppc64__ || __i386__ || __x86_64__
+             #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_4
+ 		#elif __arm__
+ 			#define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_5

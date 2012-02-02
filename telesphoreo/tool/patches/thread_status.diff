@@ -1,0 +1,12 @@
+diff --git /usr/include/mach/arm/thread_status.h /usr/include/mach/arm/thread_status.h
+index 69f9f4f..cc66a92 100755
+--- /usr/include/mach/arm/thread_status.h
++++ /usr/include/mach/arm/thread_status.h
+@@ -2,6 +2,7 @@
+ #define _MACH_ARM_THREAD_STATUS_H_
+
+ #define ARM_THREAD_STATE        1
++#define THREAD_STATE_NONE       2
+
+ typedef struct arm_thread_state {
+        unsigned int r0;

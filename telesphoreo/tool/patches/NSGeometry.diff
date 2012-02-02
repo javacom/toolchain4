@@ -1,0 +1,14 @@
+diff -ru /apl/inc/Foundation/NSGeometry.h /apl/32/Foundation/NSGeometry.h
+--- /apl/inc/Foundation/NSGeometry.h	2008-02-19 13:11:41.000000000 +0000
++++ /apl/32/Foundation/NSGeometry.h	2008-04-20 02:52:14.000000000 +0000
+@@ -6,8 +6,8 @@
+ #import <Foundation/NSValue.h>
+ #import <Foundation/NSCoder.h>
+ 
+-#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGBase.h>
+-#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGGeometry.h>
++#import <CoreGraphics/CGBase.h>
++#import <CoreGraphics/CGGeometry.h>
+ 
+ #if __LP64__ || NS_BUILD_32_LIKE_64
+ 

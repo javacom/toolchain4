@@ -1,0 +1,20 @@
+--- /usr/include/arm/signal.h	2008-02-27 05:37:19.000000000 +0000
++++ /usr/include/arm/signal.h	2008-03-24 09:51:14.000000000 +0000
+@@ -13,6 +13,8 @@
+ 
+ #ifndef _ANSI_SOURCE
+ 
++typedef int sig_atomic_t;
++
+ #ifdef __APPLE_API_OBSOLETE
+ 
+ #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+@@ -20,8 +22,6 @@
+ #define __need_struct_sigcontext
+ #include <arm/_structs.h>
+ 
+-typedef int sig_atomic_t;
+-
+ #endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+ 
+ #endif /* __APPLE_API_OBSOLETE */

@@ -1,0 +1,13 @@
+diff --git /usr/include/arm/_types.h /usr/include/arm/_types.h
+index 4817457..30c9891 100644
+--- /usr/include/arm/_types.h
++++ /usr/include/arm/_types.h
+@@ -15,7 +15,7 @@ typedef __signed char		__int8_t;
+ typedef char			__int8_t;
+ #endif	/* !__GNUC__ */
+ typedef unsigned char		__uint8_t;
+-typedef	unsigned short		__int16_t;
++typedef	short			__int16_t;
+ typedef	unsigned short		__uint16_t;
+ typedef int			__int32_t;
+ typedef unsigned int		__uint32_t;
